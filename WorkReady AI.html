@@ -1,0 +1,1852 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>WorkReady AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Ethiopic:wght@400;700&display=swap">
+<style>
+/* Layout: sticky bar with a scrolling nav row, one content column to 1080px, course library as a filterable card grid, green ink with gold highlights. */
+:root{
+  --bg:#f2f6f3; --surface:#ffffff; --surface2:#e8efeb; --line:#cfdbd4;
+  --fg:#12201a; --mut:#4f6258;
+  --accent:#0b6e3f; --accent-ink:#ffffff;
+  --gold:#8a5a00; --gold-bg:#fbefc8;
+  --red:#b3261e; --red-bg:#fde4e1;
+  --ok:#0b6e3f; --ok-bg:#d6efe1;
+  --f-display:'Bricolage Grotesque','Noto Sans Ethiopic',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible','Noto Sans Ethiopic',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1410; --surface:#122019; --surface2:#1a2b23; --line:#27392f;
+    --fg:#e6f0ea; --mut:#9db2a7;
+    --accent:#4cc38a; --accent-ink:#04160d;
+    --gold:#f2b835; --gold-bg:#2d2610;
+    --red:#ff8f85; --red-bg:#3a1b18;
+    --ok:#4cc38a; --ok-bg:#12301f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1410; --surface:#122019; --surface2:#1a2b23; --line:#27392f;
+  --fg:#e6f0ea; --mut:#9db2a7;
+  --accent:#4cc38a; --accent-ink:#04160d;
+  --gold:#f2b835; --gold-bg:#2d2610;
+  --red:#ff8f85; --red-bg:#3a1b18;
+  --ok:#4cc38a; --ok-bg:#12301f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:21px;font-weight:700;margin:34px 0 12px}
+h3{font-size:16px;font-weight:700}
+p{margin:0 0 10px;color:var(--mut)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:10px 16px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:17px;white-space:nowrap}
+.brand i{font-style:normal;color:var(--accent)}
+.navwrap{overflow-x:auto;flex:1;min-width:0}
+nav{display:flex;gap:4px;justify-content:flex-end;min-width:max-content}
+nav a{color:var(--mut);text-decoration:none;font-weight:700;font-size:14px;padding:6px 10px;border-radius:8px;white-space:nowrap}
+nav a.on{background:var(--ok-bg);color:var(--ok)}
+nav a:hover{color:var(--fg)}
+main{max-width:1080px;margin-inline:auto;padding:24px 16px 56px}
+footer{border-top:1px solid var(--line);padding:22px 16px;text-align:center;color:var(--mut);font-size:13px}
+.btn{display:inline-block;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:700 14px var(--f-body);padding:9px 15px;border-radius:8px;text-decoration:none;line-height:1.2}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:7px}
+.btn.on{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;min-width:0}
+.hero{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,34px)}
+.hero p{max-width:60ch;font-size:16px;color:var(--fg)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.grid.s{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.stat b{display:block;font:700 22px var(--f-mono);color:var(--accent);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat span{font-size:12px;color:var(--mut)}
+.pill{display:inline-block;font:700 11px var(--f-body);letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--surface2);color:var(--mut);border:1px solid var(--line)}
+.pill.ok{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+.pill.gold{background:var(--gold-bg);color:var(--gold);border-color:transparent}
+.pill.red{background:var(--red-bg);color:var(--red);border-color:transparent}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 4px;color:var(--fg)}
+input,select,textarea{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;margin-bottom:12px}
+input[type=checkbox]{width:auto;margin:0}
+input[type=range]{padding:0;accent-color:var(--accent);margin-bottom:4px}
+textarea{min-height:70px}
+.fr{display:grid;gap:0 12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+summary{cursor:pointer;padding:11px 13px;font-weight:700;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"\25B8  ";color:var(--accent)}
+details[open]>summary::before{content:"\25BE  "}
+.db{padding:4px 13px 13px;border-top:1px solid var(--line)}
+.task{display:flex;gap:9px;padding:5px 0;cursor:pointer;font-weight:400;align-items:flex-start}
+.task input{margin-top:4px;flex:none}
+.bar{height:9px;border-radius:999px;background:var(--surface2);overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--accent)}
+.course{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.course h3{font-size:15.5px}
+.course .prov{margin:0;font-size:13px}
+.course .meta{font-size:12.5px;color:var(--mut)}
+.course .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:8px;align-items:center}
+.course.done{border-color:var(--ok)}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.filters{display:grid;gap:0 10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0}
+.chip{display:inline-block;padding:6px 11px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);font-size:13px;margin:3px 4px 3px 0}
+.chip.on{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.job{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.passport{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:20px}
+.avatar{width:58px;height:58px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font:800 22px var(--f-display);flex:none}
+.badge{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--ok-bg);color:var(--ok);margin:3px 3px 3px 0}
+.badge.gold{background:var(--gold-bg);color:var(--gold)}
+.lesson{border-left:3px solid var(--gold);padding:4px 0 4px 12px;margin-bottom:12px}
+.lesson .from{font:700 11px var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--gold)}
+.lesson h4{font-size:15px;margin:2px 0}
+.lesson p{margin:0;font-size:14px}
+.slider{border-top:1px solid var(--line);padding:12px 0}
+.slider:first-child{border-top:0}
+.slider .top2{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.slider output{font:700 16px var(--f-mono);color:var(--accent)}
+.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.gapbar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:6px 0}
+.gapbar i{display:block;height:100%;background:var(--gold)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.steps li{counter-increment:s;padding-left:38px;position:relative;color:var(--mut)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--ok-bg);color:var(--ok);font:700 13px var(--f-mono);display:flex;align-items:center;justify-content:center}
+.steps b{color:var(--fg)}
+.plist{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.plist li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+.plist .k{font:700 12px var(--f-mono);color:var(--mut);width:22px;flex:none;padding-top:2px}
+.plist li.done .k{color:var(--ok)}
+.plist li.done a{text-decoration:line-through;text-decoration-color:var(--mut)}
+.note{font-size:13px;color:var(--mut)}
+.reader{display:grid;gap:16px;grid-template-columns:minmax(0,270px) minmax(0,1fr);align-items:start}
+@media (max-width:760px){.reader{grid-template-columns:minmax(0,1fr)}}
+.linkbtn{background:none;border:0;padding:0;font:700 14px var(--f-body);color:var(--fg);text-align:left;cursor:pointer}
+.linkbtn.cur{color:var(--accent);text-decoration:underline}
+.lb{margin:0 0 10px;padding-left:20px}
+.lb li{margin-bottom:4px}
+.lessonbody p,.lessonbody li{color:var(--fg)}
+.lessonbody p{max-width:68ch}
+.actbox{background:var(--gold-bg);border-radius:10px;padding:12px 14px;margin-top:14px}
+.actbox b{color:var(--gold)}
+.actbox p{margin:4px 0 0;color:var(--fg)}
+.ptext{color:var(--fg);font-size:13.5px;margin:0}
+.qf{border:0;padding:0;margin:0 0 14px}
+.qf legend{font-weight:700;margin-bottom:6px;padding:0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50;font-weight:700;font-size:14px;max-width:90vw}
+#toast.on{opacity:1}
+#err{position:fixed;top:0;left:0;right:0;background:var(--red-bg);color:var(--red);padding:10px 16px;z-index:99;font:12px var(--f-mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:560px){.top{flex-wrap:wrap;gap:6px}.navwrap{flex-basis:100%}nav{justify-content:flex-start}}
+</style>
+<div id="err" hidden></div>
+<header class="top"><span class="brand">WorkReady <i>AI</i></span><div class="navwrap"><nav id="nav" aria-label="Main"></nav></div></header>
+<main id="app"></main>
+<footer>WorkReady AI · Ethiopia edition · Free course links point to third-party sites, whose terms, certificates and availability can change.</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+
+window.onerror = function(msg, src, line){
+  var e = document.getElementById('err');
+  if(e){ e.hidden = false; e.textContent = 'Error: ' + msg + ' (line ' + line + ')'; }
+  return false;
+};
+
+/* ================= DATA ================= */
+var CURR = [
+  {w:1, p:1, name:'Digital literacy & devices', tasks:['Set up email + Google Workspace','Phone/laptop basics + typing','Online safety + passwords','Join Telegram cohort group']},
+  {w:2, p:1, name:'AI tools + English + payments', tasks:['Create ChatGPT / Gemini / Claude account','Write 5 effective prompts','Set up Telebirr / CBE Birr / M-Pesa','Set up Payoneer or Wise','Write a professional work email','Complete your FIRST paid micro-task']},
+  {w:3, p:1, name:'Soft skills & workplace English', tasks:['Interview practice','Time management + reliability','Giving and receiving feedback','Professional WhatsApp / email etiquette','Confidence & public speaking']},
+  {w:4, p:2, name:'Track core skill 1', tasks:['Choose your specialization track','Complete core skill lessons','Practice drill 1','Submit practice work']},
+  {w:5, p:2, name:'Track core skill 2', tasks:['Complete second core skill','Learn 2 industry tools','Practice drill 2','Peer review exchange']},
+  {w:6, p:2, name:'Tools + practice projects', tasks:['Build portfolio piece 1','Build portfolio piece 2','Get mentor feedback','Fix issues and finalize']},
+  {w:7, p:2, name:'Quality + client comms + portfolio', tasks:['Pass quality benchmark (95%)','Mock client call','Publish portfolio online','Send 3 practice proposals']},
+  {w:8, p:3, name:'Paid apprenticeship: project 1', tasks:['Get assigned to client project','Deliver first draft','Revise from feedback','Receive sign-off + payment']},
+  {w:9, p:3, name:'Paid apprenticeship: project 2', tasks:['Second client project','Meet deadline + quality bar','Collect client rating','Log income in passport']},
+  {w:10, p:3, name:'Advanced client work', tasks:['Advanced project delivery','Self-QC before submission','Manage client expectations','Request testimonial']},
+  {w:11, p:3, name:'Client management + ratings', tasks:['Manage 2 clients at once','Upsell or get repeat work','Collect 3 client ratings','Update passport skills']},
+  {w:12, p:4, name:'Placement + Demo Day + alumni', tasks:['Finalize Skills Passport','Update CV + LinkedIn','Present at Demo Day','Attend 3 interviews','Join alumni network','Sign 6-month support plan']}
+];
+var PHASES = [
+  {id:1, name:'Foundation (Weeks 1-3)'},
+  {id:2, name:'Specialization (Weeks 4-7)'},
+  {id:3, name:'Paid Apprenticeship (Weeks 8-11)'},
+  {id:4, name:'Placement & Alumni (Week 12+)'}
+];
+var TRACKS = [
+  {id:'ai-data', name:'AI Data & Language Services', demand:95, supply:20, wage:'$3-$8/hr', desc:'Annotation, transcription and translation for Amharic, Afaan Oromo and Tigrinya.'},
+  {id:'va-bpo',  name:'Virtual Assistance & BPO', demand:88, supply:35, wage:'$2-$6/hr', desc:'Customer support, calendar, inbox and research for local and remote clients.'},
+  {id:'mktg',    name:'Digital Marketing & Content', demand:82, supply:30, wage:'$3-$10/hr', desc:'Social media, content writing, ads and SEO for SMEs and NGOs.'},
+  {id:'nocode',  name:'No-Code Web & Automation', demand:78, supply:25, wage:'$5-$15/hr', desc:'Build websites and automate workflows without coding.'},
+  {id:'data',    name:'Data Analysis', demand:75, supply:22, wage:'$5-$12/hr', desc:'Excel, Power BI and SQL dashboards for SMEs, NGOs and government.'},
+  {id:'cyber',   name:'Cybersecurity & IT Support', demand:70, supply:10, wage:'$8-$20/hr', desc:'IT helpdesk and basic security for growing businesses.'},
+  {id:'book',    name:'Bookkeeping & Accounting', demand:68, supply:18, wage:'$4-$10/hr', desc:'Digital bookkeeping with QuickBooks, Wave and Peachtree.'}
+];
+var SKILLS = [
+  {id:'digital', name:'Digital tools & basics', note:'Email, documents, spreadsheets, web tools and the platforms clients use every day.'},
+  {id:'ai', name:'AI & prompting', note:'Demand for AI skills is growing faster than supply. Advanced AI skills are held by only about 1% of workers (OECD, from your research brief).'},
+  {id:'data', name:'Data & numbers', note:'Employers lack people who can analyze data, build dashboards and explain what the numbers mean.'},
+  {id:'cyber', name:'Cybersecurity & safety', note:'One of the hardest skill areas to hire for worldwide.'},
+  {id:'cloud', name:'Cloud computing', note:'Cloud migration continues across nearly every industry.'},
+  {id:'think', name:'Critical thinking & problem solving', note:'Employers say technical skills alone are not enough.'},
+  {id:'comm', name:'Communication & collaboration', note:'Remote and hybrid work needs clear writing, English and teamwork.'},
+  {id:'adapt', name:'Adaptability & learning how to learn', note:'The ability to learn quickly may matter more than any single tool.'}
+];
+var BEST_PRACTICES = [
+  {from:'Generation.org (McKinsey)', title:'Income-first, not completion-first', lesson:'Track wage gains and placement as the main measures, not certificates issued.'},
+  {from:'Year Up (USA)', title:'Stipend + employer commitments', lesson:'Pay learners a small stipend and get employers to commit to interviews before training starts.'},
+  {from:'Per Scholas (USA)', title:'Employer hiring events', lesson:'Monthly events let graduates meet 5+ employers in one day.'},
+  {from:'ALX (Africa)', title:'Cohorts and alumni', lesson:'Peer groups reduce dropout. An active alumni network keeps graduates employed and referring others.'},
+  {from:'Harambee (South Africa)', title:'Demand-led design', lesson:'Employers define the skills. Build the curriculum backward from open roles.'},
+  {from:'Merit America (USA)', title:'Pay after placement', lesson:'Learners pay a small share of income only once they are hired.'},
+  {from:'Digital Skills for Africa (Google)', title:'Mobile-first, low-data', lesson:'Design for a 3G phone with 500 MB a month. Anything heavier excludes most of the market.'},
+  {from:'Amal Academy (Pakistan)', title:'A fellowship, not a course', lesson:'Confidence, communication and career counseling matter as much as technical skills.'}
+];
+var INSIGHTS = [
+  'Youth unemployment and underemployment remain high in Ethiopia, especially for urban young women.',
+  'Global demand for Amharic, Afaan Oromo and Tigrinya AI data is growing faster than local supply.',
+  'SMEs need digital marketing, bookkeeping and web help but cannot afford agencies.',
+  'BPO and customer support roles are expanding with telecom and fintech growth.',
+  'Remote work is rising, but payment rails (Payoneer, Wise) remain a barrier.',
+  'TVET and university graduates often lack portfolios and client-facing skills.',
+  'Global programs reach 70-85% placement when they combine training, stipend and employer commitments.'
+];
+var GLOBAL_GAPS = [
+  ['AI and machine learning','Affordable AI training for non-technical staff.'],
+  ['Data analytics and data literacy','Industry-specific data academies.'],
+  ['Cybersecurity','Bootcamps and managed training.'],
+  ['Cloud computing','Certification pathways tied to jobs.'],
+  ['Critical thinking and problem solving','AI-assisted decision-making programs.'],
+  ['Communication and collaboration','Digital collaboration academies.'],
+  ['Adaptability and lifelong learning','Learning-to-learn programs.']
+];
+
+/* ---- Free course catalogue ---- */
+var F='Free', A='Free to audit', T='Free tier', L='Free to learn, certificate may cost', P='Free learning, exam fee extra', E='Free, check eligibility';
+var COURSES = [];
+function C(id,title,prov,url,tracks,skill,level,cost,wk,flags,sec){
+  flags = flags || '';
+  COURSES.push({id:id,title:title,prov:prov,url:url,
+    tracks: tracks === 'all' ? ['all'] : tracks.split(','),
+    skill:skill, level:level, cost:cost,
+    wk: wk ? String(wk).split(',').map(Number) : [],
+    low: flags.indexOf('t') > -1, off: flags.indexOf('o') > -1, sec: sec || ''});
+}
+/* Foundation: digital basics, safety, English, soft skills */
+C('gcf-basics','Computer Basics','GCF Global','https://edu.gcfglobal.org/en/computerbasics/','all','digital','Beginner',F,'1','t');
+C('gcf-safety','Internet Safety','GCF Global','https://edu.gcfglobal.org/en/internetsafety/','all','cyber','Beginner',F,'1','t');
+C('gcf-email','Email 101','GCF Global','https://edu.gcfglobal.org/en/email101/','all','comm','Beginner',F,'1,2','t');
+C('gcf-typing','Typing lessons and practice','GCF Global','https://edu.gcfglobal.org/en/typing/','all','digital','Beginner',F,'1','t');
+C('gcf-docs','Google Docs','GCF Global','https://edu.gcfglobal.org/en/googledocuments/','all','digital','Beginner',F,'1,2','t');
+C('gcf-sheets','Google Sheets','GCF Global','https://edu.gcfglobal.org/en/googlespreadsheets/','data,book,va-bpo','data','Beginner',F,'4,5','t');
+C('gcf-excel','Microsoft Excel','GCF Global','https://edu.gcfglobal.org/en/excel/','data,book,va-bpo','data','Beginner',F,'4,5','t');
+C('kolibri','Kolibri: learn offline from a school or hub server','Learning Equality','https://learningequality.org/kolibri/','all','adapt','Beginner',F,'1','o');
+C('khan','Khan Academy: maths, economics, computing, life skills','Khan Academy','https://www.khanacademy.org/','all','think','Beginner',F,'1,3');
+C('alison','Free courses in office skills, customer service and accounting','Alison','https://alison.com/','all','digital','Beginner',L,'');
+C('openlearn','OpenLearn free courses','The Open University','https://www.open.edu/openlearn/','all','think','Beginner',F,'3');
+C('mit-ocw','MIT OpenCourseWare','MIT','https://ocw.mit.edu/','data,cyber,nocode,ai-data','think','Advanced',F,'');
+C('harvard-free','Harvard free online courses','Harvard Online','https://pll.harvard.edu/catalog/free','data,cyber,nocode,ai-data','think','Intermediate',F,'');
+C('l2l','Learning How to Learn','Coursera (UC San Diego)','https://www.coursera.org/learn/learning-how-to-learn','all','adapt','Beginner',A,'1,3');
+C('british','LearnEnglish: grammar, vocabulary, workplace English','British Council','https://learnenglish.britishcouncil.org/','all','comm','Beginner',F,'2,3','t');
+C('bbc-eng','BBC Learning English','BBC','https://www.bbc.co.uk/learningenglish','all','comm','Beginner',F,'2,3');
+C('duolingo','Duolingo English practice','Duolingo','https://www.duolingo.com/','all','comm','Beginner',T,'2,3');
+C('eng-career','English for Career Development','Coursera (University of Pennsylvania)','https://www.coursera.org/learn/english-for-career-development','all','comm','Intermediate',A,'3');
+C('interview','Interview Warmup: practice with instant feedback','Google','https://grow.google/certificates/interview-warmup/','all','comm','Beginner',F,'3,12');
+C('gitlab-remote','Guide to all-remote work','GitLab','https://handbook.gitlab.com/handbook/company/culture/all-remote/','all','comm','Beginner',F,'2,3','t');
+/* AI */
+C('elements','Elements of AI','University of Helsinki','https://www.elementsofai.com/','all','ai','Beginner',F,'2','t');
+C('anthropic','Anthropic Academy: courses on using Claude and AI fluency','Anthropic','https://anthropic.skilljar.com/','all','ai','Beginner',F,'2');
+C('claude-pe','Prompt engineering overview','Anthropic docs','https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview','all','ai','Beginner',F,'2','t');
+C('learnprompt','Learn Prompting','Learn Prompting','https://learnprompting.org/','all','ai','Beginner',F,'2','t');
+C('openai-acad','OpenAI Academy','OpenAI','https://academy.openai.com/','all','ai','Beginner',F,'2');
+C('afe','AI for Everyone','Coursera (DeepLearning.AI)','https://www.coursera.org/learn/ai-for-everyone','all','ai','Beginner',A,'2');
+C('msgenai','Generative AI for Beginners','Microsoft (GitHub)','https://github.com/microsoft/generative-ai-for-beginners','ai-data,nocode,data','ai','Intermediate',F,'','t');
+C('dlai','Short courses on AI tools and prompting','DeepLearning.AI','https://www.deeplearning.ai/short-courses/','ai-data,nocode,data','ai','Intermediate',F,'6');
+C('kaggle-ml','Intro to Machine Learning','Kaggle Learn','https://www.kaggle.com/learn/intro-to-machine-learning','data,ai-data','ai','Intermediate',F,'6','t');
+C('hf','Hugging Face Learn: NLP, LLMs and datasets','Hugging Face','https://huggingface.co/learn','ai-data,data','ai','Advanced',F,'','t');
+C('cs50ai','CS50 Introduction to AI with Python','Harvard','https://cs50.harvard.edu/ai/','ai-data,data,cyber','ai','Advanced',F,'');
+C('fastai','Practical Deep Learning for Coders','fast.ai','https://course.fast.ai/','ai-data,data','ai','Advanced',F,'');
+C('commonvoice','Common Voice: read and validate speech data in many languages','Mozilla','https://commonvoice.mozilla.org/','ai-data','ai','Beginner',F,'4,5');
+C('amwiki','Amharic Wikipedia: read and edit for writing practice','Wikimedia','https://am.wikipedia.org/','ai-data','comm','Beginner',F,'4,5','t');
+C('labelstudio','Label Studio guide: how annotation projects work','HumanSignal','https://labelstud.io/guide/','ai-data','data','Intermediate',F,'5,6','t');
+C('masakhane','Masakhane: African language NLP community','Masakhane','https://www.masakhane.io/','ai-data','ai','Intermediate',F,'6,7');
+/* VA, BPO, customer support */
+C('hubspot','HubSpot Academy: customer service, sales and marketing','HubSpot','https://academy.hubspot.com/','va-bpo,mktg','comm','Beginner',F,'4,5');
+C('trailhead','Salesforce Trailhead: CRM basics','Salesforce','https://trailhead.salesforce.com/','va-bpo,data','digital','Beginner',F,'5');
+C('mslearn','Microsoft Learn: Microsoft 365, Power Platform and more','Microsoft','https://learn.microsoft.com/training/','va-bpo,data,cyber,book','digital','Beginner',F,'4,5');
+/* Marketing */
+C('garage','Fundamentals of Digital Marketing','Google Digital Garage','https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing','mktg','digital','Beginner',F,'4,5');
+C('meta','Meta Blueprint: Facebook and Instagram for business','Meta','https://www.facebook.com/business/learn','mktg','digital','Beginner',F,'4,5');
+C('skillshop','Skillshop: Google Ads and Analytics','Google','https://skillshop.withgoogle.com/','mktg,data','digital','Intermediate',F,'6');
+C('semrush','Semrush Academy: SEO and content','Semrush','https://www.semrush.com/academy/','mktg','digital','Intermediate',F,'6');
+C('ahrefs','Ahrefs Academy: SEO and blogging','Ahrefs','https://ahrefs.com/academy','mktg','digital','Intermediate',F,'6');
+C('canva','Canva Design School','Canva','https://www.canva.com/designschool/','mktg,va-bpo,nocode','digital','Beginner',F,'5,6');
+/* No-code */
+C('webflow','Webflow University','Webflow','https://university.webflow.com/','nocode','digital','Beginner',F,'4,5,6');
+C('make','Make Academy: automation without code','Make','https://academy.make.com/','nocode,va-bpo','digital','Intermediate',F,'5,6');
+C('zapier','Zapier Learn Center','Zapier','https://zapier.com/learn','nocode,va-bpo','digital','Beginner',F,'5');
+C('wplearn','Learn WordPress','WordPress.org','https://learn.wordpress.org/','nocode,mktg','digital','Beginner',F,'5,6');
+C('fcc','freeCodeCamp: web design, data analysis and more','freeCodeCamp','https://www.freecodecamp.org/learn/','nocode,data','digital','Beginner',F,'6','t');
+C('odin','The Odin Project: full web development path','The Odin Project','https://www.theodinproject.com/','nocode','digital','Intermediate',F,'','t');
+C('cs50','CS50: Introduction to Computer Science','Harvard','https://cs50.harvard.edu/x/','nocode,data,cyber','think','Intermediate',F,'');
+/* Data */
+C('kaggle','Kaggle Learn: Python, Pandas, SQL, data visualization','Kaggle','https://www.kaggle.com/learn','data','data','Beginner',F,'4,5,6','t');
+C('sqlbolt','SQLBolt: interactive SQL lessons','SQLBolt','https://sqlbolt.com/','data,book','data','Beginner',F,'5','t');
+C('mode-sql','SQL Tutorial','Mode','https://mode.com/sql-tutorial','data','data','Intermediate',F,'6','t');
+C('pbi','Power BI learning paths','Microsoft Learn','https://learn.microsoft.com/training/powerplatform/power-bi','data,book','data','Beginner',F,'5,6');
+C('tableau','Tableau free training videos','Tableau','https://www.tableau.com/learn/training','data','data','Beginner',F,'6');
+C('gda','Google Data Analytics Certificate','Coursera (Google)','https://www.coursera.org/professional-certificates/google-data-analytics','data','data','Beginner',A,'4,5,6,7');
+C('khan-stats','Statistics and probability','Khan Academy','https://www.khanacademy.org/math/statistics-probability','data','data','Beginner',F,'5');
+/* Cybersecurity and IT */
+C('skillsforall','Cisco Skills for All: networking and cybersecurity essentials','Cisco Networking Academy','https://skillsforall.com/','cyber','cyber','Beginner',F,'4,5');
+C('thm','TryHackMe: guided security labs in the browser','TryHackMe','https://tryhackme.com/','cyber','cyber','Beginner',T,'5,6');
+C('isc2','ISC2 Certified in Cybersecurity entry training','ISC2','https://www.isc2.org/landing/1mcc','cyber','cyber','Beginner',E,'6,7');
+C('messer','CompTIA exam video courses','Professor Messer','https://www.professormesser.com/','cyber','cyber','Intermediate',F,'5,6');
+C('gcc','Google Cybersecurity Certificate','Coursera (Google)','https://www.coursera.org/professional-certificates/google-cybersecurity','cyber','cyber','Beginner',A,'4,5,6,7');
+C('gits','Google IT Support Certificate','Coursera (Google)','https://www.coursera.org/professional-certificates/google-it-support','cyber,va-bpo','digital','Beginner',A,'4,5,6');
+C('htb','Hack The Box Academy','Hack The Box','https://academy.hackthebox.com/','cyber','cyber','Intermediate',T,'7');
+C('cybrary','Cybrary: IT and security training','Cybrary','https://www.cybrary.it/','cyber','cyber','Beginner',T,'');
+C('otw','OverTheWire wargames: learn the command line by playing','OverTheWire','https://overthewire.org/wargames/','cyber','cyber','Intermediate',F,'','t');
+/* Cloud */
+C('aws','AWS Skill Builder: Cloud Practitioner Essentials','Amazon Web Services','https://skillbuilder.aws/','cyber,data,nocode','cloud','Beginner',T,'6,7');
+C('az900','Azure Fundamentals learning path','Microsoft Learn','https://learn.microsoft.com/credentials/certifications/azure-fundamentals/','cyber,data,nocode','cloud','Beginner',P,'6,7');
+C('gcsb','Google Cloud Skills Boost: cloud and generative AI labs','Google Cloud','https://www.cloudskillsboost.google/','cyber,data,nocode','cloud','Intermediate',T,'');
+/* Bookkeeping */
+C('acctcoach','AccountingCoach: accounting and bookkeeping basics','AccountingCoach','https://www.accountingcoach.com/','book','data','Beginner',F,'4,5','t');
+C('qb','QuickBooks Online tutorials','Intuit QuickBooks','https://quickbooks.intuit.com/tutorials/','book','digital','Beginner',F,'5,6');
+C('wave','Wave: free invoicing and accounting software to practice on','Wave','https://www.waveapps.com/','book','digital','Beginner',F,'5,6');
+C('wharton','Introduction to Financial Accounting','Coursera (Wharton)','https://www.coursera.org/learn/wharton-accounting','book','data','Intermediate',A,'6,7');
+C('khan-fin','Financial literacy','Khan Academy','https://www.khanacademy.org/college-careers-more/financial-literacy','book,all','data','Beginner',F,'3');
+
+var PATHS = {
+  foundation:{name:'Foundation path (everyone)', ids:['gcf-basics','gcf-safety','gcf-typing','gcf-email','elements','anthropic','claude-pe','british','interview']},
+  'ai-data':{name:'AI Data & Language Services', ids:['elements','commonvoice','amwiki','labelstudio','masakhane','hf']},
+  'va-bpo':{name:'Virtual Assistance & BPO', ids:['gcf-docs','hubspot','trailhead','mslearn','zapier','gitlab-remote']},
+  'mktg':{name:'Digital Marketing & Content', ids:['garage','meta','hubspot','canva','skillshop','semrush']},
+  'nocode':{name:'No-Code Web & Automation', ids:['webflow','zapier','make','wplearn','fcc','odin']},
+  'data':{name:'Data Analysis', ids:['gcf-excel','kaggle','sqlbolt','pbi','tableau','gda']},
+  'cyber':{name:'Cybersecurity & IT Support', ids:['skillsforall','gcf-safety','messer','thm','gcc','isc2']},
+  'book':{name:'Bookkeeping & Accounting', ids:['acctcoach','gcf-excel','qb','wave','wharton','khan-fin']}
+};
+var GET_PAID = [
+  ['Payoneer','https://www.payoneer.com/','Receive payments from global clients and marketplaces.'],
+  ['Wise','https://wise.com/','Multi-currency account and transfers. Check which features are available in Ethiopia.'],
+  ['Upwork','https://www.upwork.com/','Marketplace for freelance and remote work.']
+];
+
+/* ---- Academy: courses written and delivered on this platform ---- */
+var ACAD = [
+ {id:"ai-exec", title:"AI for Executives: From Hype to Decisions", aud:["Executives","Senior leaders"], level:"Intermediate", hrs:2,
+  sum:"A practical guide to choosing, testing and governing AI in your organization without needing technical skills.",
+  out:["Explain what current AI does well and badly","Rank use cases by value and risk","Ask vendors the questions that matter","Run a 90-day pilot with clear measures"],
+  lessons:[
+   {t:"What AI can and cannot do for you", p:["Large language models such as Claude, ChatGPT and Gemini predict useful text from patterns in very large amounts of writing. That makes them strong at drafting, summarizing, translating, classifying and explaining.","They are weaker at being a reliable source of facts, knowing your private context, and taking responsibility. They can state wrong things in a confident tone.","A useful mental model: a fast, tireless junior analyst whose work you always review.","Before any use, ask three questions:","• What exact task is being done?","• What does an error cost us?","• Who reviews the output before it matters?"], act:"Write down three tasks in your own work where a first draft from AI would save time and an error would be cheap to catch."},
+   {t:"Finding use cases worth doing", p:["List the repeatable processes in your organization: reports, replies, meeting notes, procurement documents, recruitment screening, training material.","Score each one from 1 to 5 on volume, time spent, cost of an error, availability of the data, and ease of starting.","Start where volume is high, error cost is low and the work is internal. Meeting summaries, first drafts of reports and document search are common first choices.","Value is roughly hours saved multiplied by the cost of those hours, plus any gain in quality or speed. Measure the baseline before you start, or you cannot show a result later."], act:"Score five processes in your organization using the five criteria and circle the top two."},
+   {t:"Buying, building and asking vendors the right questions", p:["For most organizations the right first step is to use an existing tool, not to build one.","Ask every vendor:","• Where is our data stored and for how long?","• Is our data used to train your models?","• How well does the tool handle Amharic, Afaan Oromo and Tigrinya? Test it with your own documents.","• What does it cost at ten times our current use?","• How do we leave and take our data with us?","Build a small test set of real tasks with known good answers, and score every tool on the same set."], act:"Draft a test set of ten real tasks, including three in a local language, to use when comparing tools."},
+   {t:"Risk, people and a 90-day plan", p:["The main risks are privacy leaks, wrong outputs, bias, over-reliance and staff anxiety about their jobs. Name each one and give it an owner.","A simple 90-day plan:","• Days 1-30: write a short use policy, train staff, pick up to three use cases.","• Days 31-60: run the pilots and record time saved and errors found.","• Days 61-90: decide to scale, change or stop, based on the numbers.","Your role as an executive is to sponsor the work, set guardrails and ask for evidence, not to approve tools you have not seen tested."], act:"Write the three numbers you would need to see after 60 days to decide whether to scale."}
+  ],
+  quiz:[{q:"Which is the best first AI use case?", o:["Deciding which staff to dismiss","Summarizing internal meeting notes for review","Publishing public statements with no review","Replacing the finance approval process"], a:1},{q:"Why measure a baseline before a pilot?", o:["Vendors require it","So you can show what changed","It reduces licence cost","Staff prefer it"], a:1}]},
+
+ {id:"ai-gov", title:"A Responsible AI Use Policy for Your Organization", aud:["Senior leaders","NGOs","Schools"], level:"Intermediate", hrs:2,
+  sum:"Write, adopt and enforce a one-page AI use policy that protects people and data.",
+  out:["Classify data by sensitivity","Assign accountability for AI-assisted work","Write a one-page policy","Plan training and quarterly review"],
+  lessons:[
+   {t:"Why every organization needs a policy now", p:["Staff are already using AI tools, often on personal accounts, whether or not you have approved them.","A policy does not ban use. It tells people what is safe, what is not, and who to ask.","Good policies draw on public frameworks such as the OECD AI Principles, the UNESCO Recommendation on the Ethics of AI and the NIST AI Risk Management Framework. You do not need to read them all, but you should know they exist and borrow from them."], act:"Ask five colleagues which AI tools they use for work. Record the answers."},
+   {t:"Classify your data", p:["Sort what you hold into four levels:","• Public: published reports, marketing text.","• Internal: drafts, meeting notes, plans.","• Confidential: contracts, finances, staff records.","• Restricted: beneficiary or student personal data, health data, security details.","A simple rule: public data may go into approved AI tools; internal data only into tools the organization has approved; confidential and restricted data never into consumer AI tools."], act:"Give one example of each level from your own organization."},
+   {t:"Oversight, disclosure and accountability", p:["A person, not a tool, is accountable for every output used in a decision or sent to the public.","Write down who approves AI use for new purposes, who reviews outputs in high-stakes areas, and who handles incidents.","Decide when to tell people AI was used: for example in public reports, grant applications, grading and customer messages.","Create a one-line incident process: stop, tell the owner, record what was shared, decide whether affected people must be told."], act:"Fill in a table of three AI uses with the accountable person for each."},
+   {t:"Write and roll out the one-page policy", p:["A one-page policy can cover: purpose, approved tools, data rules, review rules, disclosure, incident reporting, and who to ask.","Roll it out with a 45-minute training that uses real examples from your own work.","Review it every quarter in the first year. Tools and risks change quickly.","Measure whether it works: number of questions asked, incidents reported, and staff who say they know the rules."], act:"Draft your policy using the seven headings above, one or two sentences each."}
+  ],
+  quiz:[{q:"Which data should never be pasted into a consumer AI tool?", o:["A published annual report","Student personal records","A public job advert","Your website text"], a:1},{q:"Who is accountable for an AI-assisted decision?", o:["The AI vendor","The AI tool","A named person in the organization","Nobody"], a:2}]},
+
+ {id:"school-lead", title:"Leading a School in the AI Era", aud:["School leaders","Schools"], level:"Intermediate", hrs:2,
+  sum:"A leadership guide to rules, teacher support, equity and communication when students and staff already use AI.",
+  out:["Find out how AI is already used in your school","Set clear rules for staff and students","Support teachers with time and examples","Plan for equity and measure results"],
+  lessons:[
+   {t:"Start with what is already happening", p:["Before writing rules, find out how teachers and students already use AI. A short anonymous survey and two staff conversations are enough.","Look for three things: helpful uses, risky uses, and unmet needs such as lesson planning time or feedback workload.","Many popular tools set minimum ages or require parental consent. Check each tool's terms before students use it."], act:"Write five survey questions for staff and five for students."},
+   {t:"Rules for staff and students", p:["Keep rules short and tied to learning. A common structure labels every task in one of three ways: AI not allowed, AI allowed with a declaration, AI expected.","Staff rules should cover student data: do not paste names, grades or personal details into consumer tools.","Involve students and parents in drafting. Rules people helped write are easier to follow."], act:"Label five common school tasks with one of the three categories."},
+   {t:"Support teachers", p:["Teachers need time and examples more than mandates. Give each department a protected hour a month to try tools on real lessons.","Start small: one planning task, one feedback task. Share prompts that worked in a common folder.","Pair confident staff with hesitant ones. Celebrate honest reports of what failed."], act:"Plan the first three monthly sessions, each with one concrete task."},
+   {t:"Equity, communication and measurement", p:["If only students with home internet can benefit, AI widens gaps. Plan school-based access, offline resources and printed alternatives.","Tell parents what you are doing and why, in plain language and in the local language.","Choose two or three measures: teacher time saved, quality of student work, and student wellbeing or confidence. Review them each term."], act:"Draft a half-page letter to parents explaining your approach."}
+  ],
+  quiz:[{q:"What should a school check before students use an AI tool?", o:["Its logo","Its age limits and data terms","Its download size only","Its price only"], a:1},{q:"Why involve students and parents in drafting rules?", o:["It prevents all misuse","People follow rules they helped write","It is always legally required","It saves time"], a:1}]},
+
+ {id:"ai-class", title:"AI in the Classroom: Planning, Assessment and Integrity", aud:["Teachers","Education experts","Schools"], level:"Beginner", hrs:2,
+  sum:"Use AI to plan lessons and give feedback faster, and design assessment that still shows what students know.",
+  out:["Write lesson prompts that produce usable drafts","Design AI-resilient assessment","Give feedback at scale without sharing student data","Teach students to use AI honestly"],
+  lessons:[
+   {t:"Plan lessons faster, then edit", p:["A good lesson prompt names the grade, subject, objective, time, available resources and common misconceptions.","Example: 'Plan a 40-minute Grade 8 science lesson on photosynthesis for a class of 55 with no projector. Include a starter, two activities using only paper and a blackboard, and three questions to check understanding.'","Treat the result as a draft. Check the content for errors, adjust it to your class and keep what works."], act:"Write a lesson prompt for your next class and compare the draft with your own plan."},
+   {t:"Design assessment that holds up", p:["Tasks that ask only for a finished text are easy to outsource to AI. Strengthen them by collecting process evidence: outlines, drafts, notes.","Add short oral questions, in-class writing, and tasks tied to local, personal or recent material.","Do not rely on AI detectors. They are unreliable and can wrongly accuse students, especially those writing in a second language.","AI can help you draft rubrics and sample questions. You decide what is fair."], act:"Rewrite one assignment so that it includes two forms of process evidence."},
+   {t:"Feedback at scale", p:["Give the AI your rubric and a student answer with the name removed, and ask for specific comments and one next step.","Read every comment before it reaches the student. Remove anything vague or wrong.","Never paste student names, ID numbers or sensitive details into consumer tools.","Used well, AI saves time on routine comments so you can spend it on the conversations that matter."], act:"Create a four-line rubric and test it on one anonymous answer."},
+   {t:"Teach students to use AI well", p:["Students will use AI. Teach them to ask clear questions, check claims against sources and say when they used it.","Add a short AI-use statement to assignments: which tool, for what, and what the student changed.","Set tasks where students critique an AI answer and improve it. This builds judgment, not dependence."], act:"Write a three-line AI-use statement students can attach to their work."}
+  ],
+  quiz:[{q:"What is a reliable way to protect assessment integrity?", o:["Rely on AI detectors alone","Collect drafts and ask short oral questions","Ban all devices permanently","Use only multiple choice"], a:1},{q:"Before using AI feedback comments you should:", o:["Send them unchanged","Read and correct them","Add student names to the prompt","Delete the rubric"], a:1}]},
+
+ {id:"ed-evidence", title:"Using Education Research in Policy Decisions", aud:["Education experts","Senior leaders","NGOs"], level:"Advanced", hrs:2.5,
+  sum:"Read global evidence critically, judge whether it transfers to your setting, and turn it into a clear policy brief.",
+  out:["Tell strong evidence from weak","Weigh effects against cost and delivery","Check transferability to local context","Write a two-page policy brief"],
+  lessons:[
+   {t:"Types of evidence and what they can show", p:["Randomized controlled trials compare groups assigned by chance and give the strongest evidence of cause. Quasi-experimental studies approximate this. Observational studies show patterns but not cause. Qualitative work explains why and how.","Administrative data such as enrolment and exam records tells you what is happening at scale.","Good decisions combine types: what works, for whom, why, and at what cost."], act:"Classify three studies you know as experimental, quasi-experimental, observational or qualitative."},
+   {t:"Reading effects and costs", p:["An effect size tells you how large a difference is, in standard units. Compare effects only for similar outcomes and measures.","Ask about cost per student. A small effect at very low cost may beat a large effect that is expensive to deliver.","Check implementation: was the programme delivered as designed? Weak delivery often explains weak results.","Useful public sources include the Education Endowment Foundation Teaching and Learning Toolkit, J-PAL, the World Bank and the UNESCO Global Education Monitoring Report."], act:"Pick one intervention and write its likely effect, cost and delivery risk in three lines."},
+   {t:"From global evidence to local context", p:["A result from one country may not transfer. Check seven things: learner age and level, language of instruction, class size, teacher training, infrastructure, local incentives and supervision capacity.","If several differ, run a small pilot with a comparison group before scaling.","Record what you changed from the original design so results can be interpreted."], act:"Use the seven checks to compare a global programme with a local setting you know."},
+   {t:"Write a two-page policy brief", p:["A brief for a busy decision-maker covers: the problem and who is affected, two or three options, evidence for each, cost, risks, and a recommendation with next steps.","Lead with the recommendation. Put detail in an annex.","State what you are unsure about and what evidence would change your advice.","Use plain language and numbers the reader can check."], act:"Draft the first paragraph of a brief that starts with your recommendation."}
+  ],
+  quiz:[{q:"Which design gives the strongest evidence of cause?", o:["A single anecdote","A randomized controlled trial","A survey with no comparison","An opinion article"], a:1},{q:"Before scaling a programme from another country you should:", o:["Copy it exactly","Check transfer factors and pilot","Skip costs","Ignore the language of instruction"], a:1}]},
+
+ {id:"ngo-mel", title:"Monitoring, Evaluation and Learning for NGOs", aud:["NGOs","Education experts"], level:"Intermediate", hrs:2.5,
+  sum:"Build a theory of change, choose indicators, collect data on phones and use results to improve programmes.",
+  out:["Draw a theory of change with assumptions","Write indicators with baselines and targets","Use the OECD DAC criteria","Run a quarterly learning review"],
+  lessons:[
+   {t:"Theory of change and results framework", p:["A theory of change explains how your activities lead to change. A common chain is inputs, activities, outputs, outcomes and impact.","Write the assumptions between each step. Most programmes fail at an assumption nobody checked.","A logframe turns the chain into a table with indicators, sources of data and risks."], act:"Draw a five-step chain for one of your programmes and write one assumption for each link."},
+   {t:"Indicators, baselines and data tools", p:["A good indicator is specific, measurable, relevant and time-bound. Add a baseline and a target.","Disaggregate by sex, age, disability and location where it matters, so you can see who benefits.","Free tools such as KoboToolbox and ODK let you collect data on phones, including offline.","Plan quality checks: spot checks, double entry on a sample, and a clear definition for every indicator."], act:"Write three indicators for one outcome, each with a baseline and target."},
+   {t:"Evaluation criteria and questions", p:["The OECD DAC criteria are relevance, coherence, effectiveness, efficiency, impact and sustainability. They give you a shared language with donors.","Turn each criterion into one or two evaluation questions. For example: did the programme reach the people with greatest need?","Choose methods to fit the question: surveys, interviews, focus groups, document review or comparison groups."], act:"Write one evaluation question for each of the six criteria."},
+   {t:"Learning, reporting and data protection", p:["Data is only useful if it is discussed. Hold a short review meeting every quarter and record what you will change.","Report both numbers and explanations. Explain gaps honestly.","Get informed consent, store personal data securely and share only what you need. Never put identifiable beneficiary data into consumer AI tools."], act:"Plan a one-hour quarterly learning meeting with an agenda and the decisions to record."}
+  ],
+  quiz:[{q:"What belongs between each step of a theory of change?", o:["Slogans","Assumptions","Budgets only","Photos"], a:1},{q:"Which free tool collects data on phones, including offline?", o:["KoboToolbox","A fax machine","A slide template","A poster"], a:0}]},
+
+ {id:"ngo-grants", title:"Grant Writing and Donor Reporting with AI", aud:["NGOs"], level:"Intermediate", hrs:2,
+  sum:"Read calls like a donor, structure strong proposals, draft safely with AI and report honestly.",
+  out:["Build a compliance table from a call","Structure a proposal and budget narrative","Use AI without inventing facts","Write a clear variance explanation"],
+  lessons:[
+   {t:"Read the call like a donor", p:["Start with the call text. Highlight priorities, eligibility rules, deadlines, budget limits and scoring criteria.","Build a compliance table: each requirement, where you answer it, and who is responsible.","If your idea does not fit the priorities, say so early and move on. A strong fit beats clever writing."], act:"Make a compliance table for a real call with at least eight rows."},
+   {t:"Structure a strong proposal", p:["Most proposals include: the need and evidence, objectives, activities, a results framework, a budget with narrative, risks and sustainability.","Show the need with local data and one or two credible sources.","Keep objectives few and measurable. Make the budget match the activities line by line."], act:"Write a three-sentence need statement with one verified number and its source."},
+   {t:"Use AI safely for drafting", p:["Give the AI the call text, your facts and the structure you need. Ask it to draft, shorten or improve clarity.","Never let it invent statistics, partners or past results. Check every number and name against a source.","Remove personal and confidential information before pasting anything.","Keep your own voice. Funders read many proposals, and generic text stands out for the wrong reasons."], act:"Write a prompt that supplies your facts and forbids inventing numbers."},
+   {t:"Donor reporting that builds trust", p:["Report against the plan: planned, achieved, and why they differ.","Pair numbers with a short case that shows change, with consent from the people described.","Raise problems early with a proposed fix. Donors value honesty and learning.","Keep a simple evidence folder so audits and reports are easy."], act:"Draft a half-page variance explanation for one indicator that missed its target."}
+  ],
+  quiz:[{q:"What should you never let AI do in a proposal?", o:["Tighten wording","Invent statistics","Suggest headings","Check grammar"], a:1},{q:"A compliance table helps you:", o:["Avoid reading the call","Show where each requirement is met","Raise your budget","Skip risks"], a:1}]},
+
+ {id:"lead-prompt", title:"Research-Based Prompting for Decision-Makers", aud:["Executives","Senior leaders","NGOs","Education experts"], level:"Intermediate", hrs:2,
+  sum:"Write prompts that return sourced, checkable research, verify the answers and organize them into a decision brief.",
+  out:["Write a six-part research prompt","Demand sources, dates and confidence levels","Verify claims before relying on them","Produce a one-page decision brief"],
+  lessons:[
+   {t:"Anatomy of a research prompt", p:["A strong prompt for a decision has six parts: role, the decision to be made, context, constraints, evidence rules and output format.","Example evidence rule: 'Cite sources with title, publisher, date and link. Mark each claim as established, likely or uncertain.'","Specify the reader: a board, a minister, a donor. It changes what a good answer looks like."], act:"Rewrite a vague question you recently asked into the six-part format."},
+   {t:"Ask for evidence, not just answers", p:["Ask the AI to separate facts from inferences, to present the strongest case for each option, and to say what evidence would change its conclusion.","Prefer tools with web search turned on, and ask for the most recent sources. Tell it today's date.","Ask for global evidence first and then for what is known about your region, and to say where evidence is missing.","Request a short table: claim, source, date, confidence."], act:"Add three evidence rules to your prompt and run it."},
+   {t:"Verify before you rely", p:["Open the sources. Check that the link exists, says what the answer claims, and is recent enough.","Cross-check important numbers with a second independent source.","Ask a second prompt to find errors: 'List the five weakest claims in the answer above and how to test them.'","If a claim cannot be verified, remove it or label it as unverified."], act:"Verify three claims from an AI answer. Record how many held up."},
+   {t:"Organize it into a decision brief", p:["Turn the research into one page: the decision, options, evidence for each, risks, recommendation and next steps.","Keep a log of prompts, sources and dates so others can reproduce and challenge your work.","Share the brief with a sceptic before the meeting. The Insight Studio in this platform builds prompts and brief templates for you."], act:"Produce a one-page brief from your verified research."}
+  ],
+  quiz:[{q:"Which evidence rule is most useful?", o:["Sound confident","Cite title, publisher, date and link for each claim","Use long sentences","Avoid numbers"], a:1},{q:"After getting an AI answer you should:", o:["Trust it fully","Open and check key sources","Delete the sources","Skip cross-checking"], a:1}]},
+
+ {id:"social-rev", title:"Social Media Marketing for Training Providers", aud:["Trainers","NGOs","Schools"], level:"Beginner", hrs:2,
+  sum:"Choose channels, turn each lesson into many posts, measure the funnel and market honestly on YouTube, LinkedIn, TikTok, X and messaging apps.",
+  out:["Pick channels by audience","Turn one lesson into a week of content","Measure reach, demo and payment","Make claims you can support"],
+  lessons:[
+   {t:"Choose channels by audience", p:["LinkedIn suits professionals, employers and senior leaders. YouTube suits how-to content people search for, and builds over time. TikTok and Instagram Reels suit short demonstrations for younger audiences. X suits news, commentary and community. Telegram and WhatsApp suit conversations and conversion.","You do not need all of them. Pick two to start, based on where your learners and buyers already spend time."], act:"List your three audiences and the two channels you will use for each."},
+   {t:"One lesson, many posts", p:["Turn each lesson into a content set: one longer video, three short clips, one LinkedIn post, one X thread and one Telegram message.","Use a simple shape for short content: a hook in the first seconds, one useful idea and a clear next step.","Offer the free demo as the next step. People trust what they can try."], act:"Plan a week of posts from a single lesson."},
+   {t:"Funnels and measurement", p:["A funnel has stages: reach, click, free demo, payment, completion. Count people at each stage.","Ask every applicant how they heard about you. This platform records the answer so you can compare channels.","Track cost per paying learner for each channel. Keep what works and stop what does not."], act:"Make a table with the stages of your funnel and a number you could measure for each."},
+   {t:"Trust, rules and honest claims", p:["Follow each platform's advertising and content rules, and disclose paid partnerships.","Never promise jobs or income. Share real, typical results and say how they were measured.","Ask permission before posting a learner's story, photo or earnings.","Respond to comments and questions quickly. Trust is your main asset."], act:"Write two honest claims you can support with your own data."}
+  ],
+  quiz:[{q:"What should short content include?", o:["A hook, one idea and a next step","Only a logo","Ten topics at once","No call to action"], a:0},{q:"Which claim is safest to publish?", o:["Everyone gets a job in a month","Typical results from our own data, with the method stated","Guaranteed double income","No effort needed"], a:1}]},
+
+ {id:"train-biz", title:"Train the Trainer: Design, Price and Deliver Paid Courses", aud:["Trainers","Education experts"], level:"Intermediate", hrs:2.5,
+  sum:"Design courses backwards from outcomes, deliver in low-data settings, price sustainably and improve every cohort.",
+  out:["Write measurable learning outcomes","Plan a low-data cohort","Price a course from your costs","Collect feedback and track outcomes"],
+  lessons:[
+   {t:"Design backwards from outcomes", p:["Start with the person and the result: who is the learner, and what should they be able to do after the course?","Then design the assessment that proves it, then the activities, then the content. Cut anything that does not serve the outcome.","Write three to five measurable outcomes in the form 'learners will be able to ...'."], act:"Write four outcomes for a course you could teach."},
+   {t:"Deliver cohorts in low-data settings", p:["Mix short live sessions with recorded lessons and text-based materials. Keep files small and offer an offline pack.","Use Telegram or WhatsApp groups for questions and reminders.","Change activity every 10 to 15 minutes: a question, a short task, a pair discussion.","Plan for power cuts and weak connections with a catch-up recording and a written summary."], act:"Plan one three-hour session as six blocks of about thirty minutes."},
+   {t:"Pricing, payments and receipts", p:["Common models: a one-time cohort fee, monthly access, an organization licence, and pay-after-placement. Choose the one that fits your learners' cash flow.","List your costs: your time, platform, data, certificates, support and payment fees.","Offer payment methods your learners already use, such as mobile money and bank transfer, and give a receipt for each payment.","Publish a clear refund and scholarship policy."], act:"Work out a price for one cohort from your costs and a target margin."},
+   {t:"Quality, feedback and outcomes", p:["Collect feedback after every session with two questions: what helped, and what should change.","Track completion, assessment results and, over time, what learners do next: jobs, income, new skills.","Improve one thing each cohort and tell learners what you changed.","Keep a record of consent when you share learners' results."], act:"Write a three-question feedback form for the end of your course."}
+  ],
+  quiz:[{q:"Course design starts with:", o:["Slides","The learner and the outcome","The price","The logo"], a:1},{q:"Why give a receipt for every payment?", o:["It looks nice","It builds trust and supports records","It is optional and useless","It lowers cost"], a:1}]}
+];
+var ACAD_AUD = ["Executives","Senior leaders","School leaders","Schools","Teachers","Education experts","NGOs","Trainers"];
+
+/* ---- Insight Studio: sectors, decision types, prompt library ---- */
+var SECTORS = [
+ {id:"education", name:"Education", src:["UNESCO Global Education Monitoring Report","OECD Education at a Glance and PISA","World Bank education reports","UNICEF","Education Endowment Foundation Toolkit","J-PAL","Ethiopia Ministry of Education statistics"]},
+ {id:"ngo", name:"NGO and humanitarian", src:["OECD DAC evaluation criteria","ALNAP","UN OCHA and Humanitarian Data Exchange","Sphere standards","World Bank","Peer-reviewed evaluations"]},
+ {id:"health", name:"Health", src:["WHO","IHME Global Burden of Disease","Cochrane reviews","The Lancet","Ethiopia Ministry of Health","World Bank health financing"]},
+ {id:"government", name:"Government and public policy", src:["OECD","UNDP","World Bank","IMF","African Union","Ethiopian Statistics Service (formerly CSA)"]},
+ {id:"finance", name:"Finance and fintech", src:["IMF","World Bank Global Findex","Bank for International Settlements","National Bank of Ethiopia","GSMA mobile money reports"]},
+ {id:"agriculture", name:"Agriculture and food", src:["FAO","CGIAR","IFPRI","World Bank agriculture","Ethiopian Statistics Service agricultural surveys"]},
+ {id:"technology", name:"Technology and telecom", src:["ITU","GSMA","OECD.AI","World Bank digital development","Stanford AI Index"]},
+ {id:"energy", name:"Energy", src:["IEA","IRENA","World Bank ESMAP","Sustainable Energy for All"]},
+ {id:"business", name:"Business and economy", src:["World Bank Enterprise Surveys","McKinsey Global Institute","World Economic Forum","ILO","UNCTAD"]}
+];
+var DTYPES = [
+ {id:"strategy", name:"Strategy and direction", frames:"options analysis, scenario planning, SWOT as a starting point only, stakeholder mapping"},
+ {id:"investment", name:"Investment or funding", frames:"cost-benefit and cost-effectiveness analysis, return and payback, sensitivity analysis, downside case"},
+ {id:"policy", name:"Policy or programme design", frames:"policy options analysis, stakeholder analysis, theory of change, implementation feasibility"},
+ {id:"risk", name:"Risk and compliance", frames:"likelihood and impact scoring, pre-mortem, controls and owners, early-warning indicators"},
+ {id:"program", name:"Programme evaluation", frames:"OECD DAC criteria, results framework, baseline and comparison, learning questions"},
+ {id:"org", name:"People and organization design", frames:"role clarity, capacity and workload analysis, change management, RACI"},
+ {id:"crisis", name:"Crisis response", frames:"situation report, triage of actions, communication plan, decision log"}
+];
+var PROMPT_LIB = [
+ {id:"p1", title:"Education policy options brief", sector:"education", text:"Act as an education policy analyst. I must decide [DECISION, e.g. whether to introduce X in Grades Y-Z in REGION]. Summarize the global evidence on this intervention: effect sizes, costs and the conditions needed for success. Then assess how well it transfers to [COUNTRY/REGION] using class size, language of instruction, teacher capacity and infrastructure. Give three options with cost per student, risks and a pilot design."},
+ {id:"p2", title:"School AI-use policy drafter", sector:"education", text:"Draft a one-page AI use policy for [SCHOOL TYPE AND LEVELS]. Cover student use, staff use, assessment integrity, data protection, tool age limits and parent communication. Base it on UNESCO guidance on generative AI in education and the OECD AI Principles. Add a plain-language version for parents in [LANGUAGE]. List what I must check against ministry rules before adopting it."},
+ {id:"p3", title:"Donor landscape scan", sector:"ngo", text:"Act as a funding adviser for an NGO working on [SECTOR/THEME] in [COUNTRY]. Identify the main international donors and foundations that fund this theme, their current priorities, typical grant sizes, eligibility rules and deadlines. Rank them by fit with our work: [ONE-PARAGRAPH DESCRIPTION]. Flag any information you could not confirm."},
+ {id:"p4", title:"Programme evaluation planner", sector:"ngo", text:"Design an evaluation plan for [PROGRAMME] using the six OECD DAC criteria. For each criterion give two evaluation questions, indicators, data sources and methods suited to a low-resource setting. Propose a realistic budget range and timeline, and name the main risks to data quality and how to reduce them."},
+ {id:"p5", title:"Executive AI use-case prioritization", sector:"business", text:"I lead [ORGANIZATION TYPE, SIZE]. List 10 realistic AI use cases for our work, then score each from 1 to 5 on volume, time saved, cost of errors, data readiness and ease of start. Recommend the top three for a 60-day pilot with measures of success, owners and the main risks. Assume staff have basic digital skills and unreliable internet."},
+ {id:"p6", title:"Board paper: AI risk register", sector:"business", text:"Prepare a board paper on the risks of using generative AI in [ORGANIZATION]. Include a risk register with likelihood, impact, controls, owner and early-warning indicator for privacy, accuracy, bias, vendor dependence, staff capability and reputation. Reference the NIST AI Risk Management Framework and OECD AI Principles. End with three decisions the board should take."},
+ {id:"p7", title:"Digital public service options", sector:"government", text:"Act as a public sector adviser. We are considering digitizing [SERVICE] in [COUNTRY/REGION]. Compare three options (partial digitization, full online service, assisted-service points). Use international evidence on cost, uptake, inclusion and failure causes. Address users with low connectivity and low literacy. Recommend an approach and a phased plan."},
+ {id:"p8", title:"Health intervention cost-effectiveness", sector:"health", text:"Summarize the evidence on the cost-effectiveness of [INTERVENTION] for [CONDITION] in low- and middle-income countries. Give the typical cost per outcome, the strength of evidence, delivery requirements and equity effects. Judge whether it fits [DISTRICT/COUNTRY] given workforce and supply constraints, and suggest a pilot with indicators."},
+ {id:"p9", title:"Agriculture value chain diagnostic", sector:"agriculture", text:"Diagnose the value chain for [CROP/PRODUCT] in [REGION]. Map actors, margins, bottlenecks, inputs, finance, storage and market access. Compare with successful models from similar countries, and list three interventions ranked by impact, cost and ease. Highlight climate and price risks and who bears them."},
+ {id:"p10", title:"Mobile money product risk review", sector:"finance", text:"Review the risks of launching [PRODUCT, e.g. savings or credit feature] on mobile money in [COUNTRY]. Cover consumer protection, fraud, liquidity, regulation, agent network and data privacy. Use GSMA and World Bank evidence. Provide a risk table with controls and a go/no-go checklist."},
+ {id:"p11", title:"Low-data product strategy", sector:"technology", text:"We are building [PRODUCT] for users on 3G phones with limited data bundles in [COUNTRY]. Recommend design, delivery and pricing choices using evidence from comparable markets. Include offline options, local-language support, payment methods and the key metrics we should track in the first 6 months."},
+ {id:"p12", title:"Energy access options", sector:"energy", text:"Compare options to bring reliable energy to [COMMUNITY/INSTITUTION TYPE] in [REGION]: grid extension, mini-grid and standalone solar. Use IEA, IRENA and ESMAP evidence on cost per connection, reliability, productive use and sustainability. Recommend an option with a financing approach and a maintenance plan."},
+ {id:"p13", title:"Crisis communication plan", sector:"ngo", text:"We face [SITUATION]. Prepare a 72-hour communication plan: internal messages, affected-community messages in [LANGUAGES], partner and donor updates and media lines. Include a decision log template, who approves what, and the facts we must confirm before publishing anything."},
+ {id:"p14", title:"Organization design review", sector:"business", text:"Review the structure of [ORGANIZATION] with [NUMBER] staff and these functions: [LIST]. Identify overlaps, gaps and bottlenecks in decision-making. Propose two alternative structures with a RACI for five key decisions, the transition risks, and how to measure whether the change worked."}
+];
+var CHANNELS = ["YouTube","LinkedIn","TikTok","X (Twitter)","Facebook","Instagram","Telegram","WhatsApp","Friend or colleague","Search engine","School or event","Other"];
+var PAY_METHODS = ["Telebirr","CBE Birr","Bank transfer","M-Pesa","International transfer (invoice)"];
+
+function defaultPlans(){
+  return [
+   {id:"demo", name:"Free demo", price:0, cur:"ETB", per:"", who:"Everyone", feats:["Week 1 of the programme","Lesson 1 of every Academy course","Skill gap check and the Insight Studio prompt builder","The free course library"]},
+   {id:"seat", name:"Programme seat", price:2000, cur:"ETB", per:"one-time", who:"Learners", feats:["The full 12-week programme","All Academy courses","Skills Passport and employer matching","Scholarship and pay-after-placement requests considered"]},
+   {id:"academy", name:"Academy all-access", price:500, cur:"ETB", per:"per month", who:"Individuals", feats:["All Academy courses with quizzes","Full prompt library and decision brief builder","Course completions in your passport"]},
+   {id:"org", name:"Team access", price:200, cur:"USD", per:"per month", who:"NGOs, schools, companies", feats:["Access codes for your staff, created after payment is verified","Team skill gap check","Onboarding support"]},
+   {id:"trainer", name:"Trainer listing", price:1500, cur:"ETB", per:"per month", who:"Trainers", feats:["Listing on the Academy page after approval","Profile with your topics and contact details"]},
+   {id:"employer", name:"Employer role listing", price:3000, cur:"ETB", per:"per role", who:"Employers", feats:["Role listed on the Employers page","Matching help from the programme team"]}
+  ];
+}
+
+
+/* ---- Sector learning: free courses outside the programme tracks ---- */
+var SECTOR_LABELS = ['Health','Agriculture and food','Humanitarian and development','Business and entrepreneurship','Engineering and energy','Science and maths','Teaching and education','Creative and media','Languages','Governance and finance','Climate and sustainability'];
+C('openwho','OpenWHO: free courses on health emergencies and public health','World Health Organization','https://openwho.org/','none','domain','Intermediate',F,'','','Health');
+C('who-academy','WHO Academy: learning for health workers','World Health Organization','https://academy.who.int/','none','domain','Intermediate',E,'','','Health');
+C('glh','Global Health eLearning Center','USAID-supported','https://www.globalhealthlearning.org/','none','domain','Beginner',F,'','','Health');
+C('khan-health','Health and medicine','Khan Academy','https://www.khanacademy.org/science/health-and-medicine','none','domain','Beginner',F,'','','Health');
+C('fao-learn','FAO eLearning Academy: agriculture, food security, nutrition','Food and Agriculture Organization','https://elearning.fao.org/','none','domain','Intermediate',F,'','','Agriculture and food');
+C('disasterready','Disaster Ready: humanitarian and emergency training','Disaster Ready','https://www.disasterready.org/','none','domain','Beginner',F,'','','Humanitarian and development');
+C('kaya','Kaya: learning for humanitarian and development workers','Kaya','https://kayaconnect.org/','none','domain','Beginner',F,'','','Humanitarian and development');
+C('hla','Humanitarian Leadership Academy learning','Humanitarian Leadership Academy','https://www.humanitarianleadershipacademy.org/','none','domain','Beginner',F,'','','Humanitarian and development');
+C('unicef-agora','UNICEF Agora: learning on child rights, health and education','UNICEF','https://agora.unicef.org/','none','domain','Beginner',F,'','','Humanitarian and development');
+C('sdg-academy','SDG Academy: sustainable development courses','SDG Academy','https://sdgacademy.org/','none','domain','Intermediate',F,'','','Climate and sustainability');
+C('unccelearn','UN CC:Learn: climate change learning','UN Climate Change Learning Partnership','https://unccelearn.org/','none','domain','Beginner',F,'','','Climate and sustainability');
+C('wb-olc','Open Learning Campus: development, governance, health, finance','World Bank','https://olc.worldbank.org/','none','domain','Intermediate',F,'','','Governance and finance');
+C('startupschool','Startup School: build and launch a business','Y Combinator','https://www.startupschool.org/','none','domain','Beginner',F,'','','Business and entrepreneurship');
+C('energypedia','Energypedia: energy access knowledge for developing countries','Energypedia','https://energypedia.info/','none','domain','Intermediate',F,'','t','Engineering and energy');
+C('aac','Electronics tutorials and textbook','All About Circuits','https://www.allaboutcircuits.com/','none','domain','Beginner',F,'','t','Engineering and energy');
+C('phet','PhET interactive science and maths simulations','University of Colorado Boulder','https://phet.colorado.edu/','none','domain','Beginner',F,'','','Science and maths');
+C('ck12','CK-12: free science and maths textbooks and practice','CK-12 Foundation','https://www.ck12.org/','none','domain','Beginner',F,'','','Science and maths');
+C('3b1b','Visual maths lessons','3Blue1Brown','https://www.3blue1brown.com/','none','domain','Intermediate',F,'','','Science and maths');
+C('oercommons','OER Commons: open teaching and learning materials','ISKME','https://oercommons.org/','none','domain','Beginner',F,'','','Teaching and education');
+C('edutopia','Edutopia: classroom strategies and teacher resources','Edutopia','https://www.edutopia.org/','none','domain','Beginner',F,'','t','Teaching and education');
+C('ted-ed','TED-Ed lessons and teaching tools','TED-Ed','https://ed.ted.com/','none','domain','Beginner',F,'','','Teaching and education');
+C('blender','Blender tutorials: 3D and animation','Blender Foundation','https://www.blender.org/support/tutorials/','none','domain','Beginner',F,'','','Creative and media');
+C('davinci','DaVinci Resolve training: video editing and colour','Blackmagic Design','https://www.blackmagicdesign.com/products/davinciresolve/training','none','domain','Beginner',F,'','','Creative and media');
+C('openculture-lang','Free language lessons collection','Open Culture','https://www.openculture.com/freelanguagelessons','none','domain','Beginner',F,'','','Languages');
+
+/* ---- Learning platforms for every sector ---- */
+var LEARN_PLATFORMS = [
+ {name:'Class Central', url:'https://www.classcentral.com/', desc:'Search across many providers to find free courses on any subject. The best starting point when you cannot find a course here.', tags:['Search all providers']},
+ {name:'Coursera', url:'https://www.coursera.org/', desc:'Courses from universities and companies in most fields. Many can be audited free. Certificates usually cost money, and financial aid is offered on many courses.', tags:['All sectors','Audit free']},
+ {name:'edX', url:'https://www.edx.org/', desc:'University courses in most fields. Many can be audited free. Verified certificates usually cost money.', tags:['All sectors','Audit free']},
+ {name:'FutureLearn', url:'https://www.futurelearn.com/', desc:'Short courses from universities and institutions. Free access is often time-limited.', tags:['All sectors','Limited free access']},
+ {name:'Udemy free courses', url:'https://www.udemy.com/courses/free/', desc:'A catalogue of free courses on business, technology, design and personal skills. Quality varies, so read the reviews.', tags:['All sectors','Check quality']},
+ {name:'Saylor Academy', url:'https://www.saylor.org/', desc:'Free college-level courses in business, computing, maths, sciences and more.', tags:['All sectors']},
+ {name:'Stanford Online free courses', url:'https://online.stanford.edu/free-courses', desc:'Free courses from Stanford in technology, health, education and more.', tags:['University']},
+ {name:'MIT OpenCourseWare', url:'https://ocw.mit.edu/', desc:'Lecture notes, assignments and videos from MIT courses, free to everyone.', tags:['Engineering','Science','Business']},
+ {name:'OER Commons', url:'https://oercommons.org/', desc:'Open educational resources for teachers and learners, across all levels and subjects.', tags:['Teaching','All levels']},
+ {name:'Open Textbook Library', url:'https://open.umn.edu/opentextbooks', desc:'Free, reviewed college textbooks that you can read online.', tags:['Textbooks']},
+ {name:'LibreTexts', url:'https://libretexts.org/', desc:'Free online textbooks in sciences, engineering, maths, humanities and social sciences.', tags:['Textbooks','Science']},
+ {name:'Wikiversity', url:'https://www.wikiversity.org/', desc:'Free learning materials and projects from the Wikimedia community.', tags:['All sectors','Low data']},
+ {name:'Internet Archive', url:'https://archive.org/', desc:'Free books, lectures and recordings. Check the licence on each item.', tags:['Books','Media']},
+ {name:'African Virtual University', url:'https://avu.org/', desc:'An African institution offering open and distance learning. Check which programmes are free.', tags:['Africa','Check cost']},
+ {name:'Open Culture free courses', url:'https://www.openculture.com/freeonlinecourses', desc:'A curated list of free online courses and lectures in many fields.', tags:['All sectors']}
+];
+
+/* ---- Job boards and job sources ---- */
+var JOB_CATS = [['','All'],['ethiopia','Ethiopia'],['ngo','NGO, UN and international'],['remote','Remote'],['freelance','Freelance and projects']];
+var JOB_SITES = [
+ {id:'ethiojobs', cat:'ethiopia', name:'EthioJobs', url:'https://www.ethiojobs.net/', desc:'Ethiopian job board with vacancies from private companies, NGOs and government bodies.', tags:['Ethiopia','All sectors']},
+ {id:'etcareers', cat:'ethiopia', name:'ETcareers', url:'https://etcareers.com/', desc:'Ethiopian job listings with categories for NGO, UN and government vacancies.', tags:['Ethiopia','NGO','Government']},
+ {id:'lmis', cat:'ethiopia', name:'Labour Market Information System', url:'https://lmis.gov.et/', desc:'Government labour market platform of the Ministry of Labor and Skills. Check which services are live.', tags:['Ethiopia','Government']},
+ {id:'linkedin', cat:'ethiopia', name:'LinkedIn Jobs', url:'https://www.linkedin.com/jobs/', desc:'Set the location to Ethiopia to see vacancies from banks, telecoms, NGOs and companies. Also lists remote roles.', tags:['Ethiopia','Remote','Professional']},
+ {id:'reliefweb', cat:'ngo', name:'ReliefWeb Jobs', url:'https://reliefweb.int/jobs', desc:'Humanitarian and development vacancies. Filter by country to find roles in Ethiopia.', tags:['Humanitarian','Development']},
+ {id:'uncareers', cat:'ngo', name:'UN Careers', url:'https://careers.un.org/', desc:'Official United Nations job portal for the UN Secretariat and many UN entities.', tags:['United Nations']},
+ {id:'unjobs', cat:'ngo', name:'UNjobs', url:'https://unjobs.org/', desc:'Aggregates vacancies from the UN system and international organizations. Filter by country.', tags:['United Nations','International']},
+ {id:'devex', cat:'ngo', name:'Devex Jobs', url:'https://www.devex.com/jobs', desc:'Jobs in international development, health and humanitarian work. Some features need a paid plan.', tags:['Development','Check cost']},
+ {id:'impactpool', cat:'ngo', name:'Impactpool', url:'https://www.impactpool.org/', desc:'Jobs in the UN, NGOs and social enterprises, searchable by country.', tags:['International','Impact']},
+ {id:'idealist', cat:'ngo', name:'Idealist', url:'https://www.idealist.org/', desc:'Jobs, internships and volunteering at nonprofits and social enterprises worldwide.', tags:['Nonprofit','Volunteering']},
+ {id:'au', cat:'ngo', name:'African Union careers', url:'https://au.int/en/jobs', desc:'Vacancies at the African Union Commission, headquartered in Addis Ababa.', tags:['Addis Ababa','Continental']},
+ {id:'afdb', cat:'ngo', name:'African Development Bank careers', url:'https://www.afdb.org/en/about-us/careers', desc:'Careers at the African Development Bank Group.', tags:['Finance','Development']},
+ {id:'worldbank', cat:'ngo', name:'World Bank Group careers', url:'https://www.worldbank.org/en/about/careers', desc:'Jobs, internships and early-career programmes at the World Bank Group.', tags:['Finance','Development']},
+ {id:'wwr', cat:'remote', name:'We Work Remotely', url:'https://weworkremotely.com/', desc:'Remote jobs in programming, design, support, marketing and more. Read each listing for country limits.', tags:['Remote','Tech','Support']},
+ {id:'remoteok', cat:'remote', name:'Remote OK', url:'https://remoteok.com/', desc:'Remote jobs across tech and other fields, with filters by role type.', tags:['Remote','Tech']},
+ {id:'remotive', cat:'remote', name:'Remotive', url:'https://remotive.com/', desc:'Remote job listings in software, customer support, marketing and more.', tags:['Remote','Support','Marketing']},
+ {id:'workingnomads', cat:'remote', name:'Working Nomads', url:'https://www.workingnomads.com/jobs', desc:'Curated remote jobs across categories including marketing, support and writing.', tags:['Remote','Writing']},
+ {id:'himalayas', cat:'remote', name:'Himalayas', url:'https://himalayas.app/jobs', desc:'Remote jobs with filters by location and timezone.', tags:['Remote','Timezone filters']},
+ {id:'remoteco', cat:'remote', name:'Remote.co', url:'https://remote.co/', desc:'Remote job listings and advice on working from home.', tags:['Remote','Advice']},
+ {id:'upwork', cat:'freelance', name:'Upwork', url:'https://www.upwork.com/', desc:'Freelance marketplace for writing, support, design, data work and more. Check that payouts work in your country before you invest time.', tags:['Freelance','Payouts']},
+ {id:'fiverr', cat:'freelance', name:'Fiverr', url:'https://www.fiverr.com/', desc:'Sell services as gigs. Check seller availability and payout options for Ethiopia first.', tags:['Freelance','Gigs']},
+ {id:'freelancer', cat:'freelance', name:'Freelancer', url:'https://www.freelancer.com/', desc:'Bid on freelance projects in many fields. Check payout options for your country.', tags:['Freelance','Projects']},
+ {id:'toptal', cat:'freelance', name:'Toptal', url:'https://www.toptal.com/', desc:'A screened network for experienced freelancers in software, design and finance. Selective.', tags:['Experienced','Screened']}
+];
+
+/* END DATA */
+
+var LEVEL_RANK = {Beginner:1, Intermediate:2, Advanced:3};
+var SKILL_BY = {}; SKILLS.forEach(function(s){ SKILL_BY[s.id] = s; });
+SKILL_BY.domain = {id:'domain', name:'Sector knowledge'};
+var COURSE_BY = {}; COURSES.forEach(function(c){ COURSE_BY[c.id] = c; });
+
+/* ================= STATE ================= */
+var KEY = 'wra_v6';
+function fresh(){
+  return {
+    applicants:[], learners:[], cp:{}, assess:{}, fx:150, ap:{}, payments:[], partners:[], plans:defaultPlans(), payInfo:{}, settings:{siteUrl:'', vat:0},
+    demand:[
+      {id:'D1', employer:'Global AI Data Co.', role:'Amharic Data Annotator', wage:'$4-$6 / hr', location:'Remote', type:'Remote', seats:50, status:'Open', track:'ai-data', skills:['Annotation','Quality control'], committed:true},
+      {id:'D2', employer:'Local BPO (Addis)', role:'Customer Support Agent', wage:'12,000-18,000 ETB / mo', location:'Addis Ababa', type:'Full-time', seats:20, status:'Open', track:'va-bpo', skills:['Customer support','CRM'], committed:true},
+      {id:'D3', employer:'SME Network', role:'Social Media Manager', wage:'10,000-15,000 ETB / mo', location:'Addis Ababa', type:'Hybrid', seats:8, status:'Open', track:'mktg', skills:['Social media','Canva'], committed:false},
+      {id:'D4', employer:'NGO Partner', role:'Data Entry Clerk', wage:'9,000-12,000 ETB / mo', location:'Adama', type:'Full-time', seats:5, status:'Open', track:'data', skills:['Excel','Data entry'], committed:true},
+      {id:'D5', employer:'Tech Startup', role:'No-Code Web Builder', wage:'15,000-25,000 ETB / mo', location:'Remote', type:'Contract', seats:4, status:'Open', track:'nocode', skills:['Webflow','Landing pages'], committed:false},
+      {id:'D6', employer:'Fintech', role:'IT Support (Level 1)', wage:'14,000-20,000 ETB / mo', location:'Addis Ababa', type:'Full-time', seats:6, status:'Open', track:'cyber', skills:['IT helpdesk','Networking'], committed:true},
+      {id:'D7', employer:'Import/Export SME', role:'Bookkeeper', wage:'10,000-14,000 ETB / mo', location:'Addis Ababa', type:'Part-time', seats:3, status:'Open', track:'book', skills:['QuickBooks','Invoicing'], committed:false}
+    ],
+    mentors:[
+      {name:'Selam T.', track:'ai-data', bio:'3 years annotating for global AI companies. Now leads a team of 12.'},
+      {name:'Yohannes A.', track:'va-bpo', bio:'Runs a 30-person BPO in Addis. Hires graduates every quarter.'},
+      {name:'Meron K.', track:'mktg', bio:'Freelance social media manager for 15 SMEs.'},
+      {name:'Dawit B.', track:'nocode', bio:'Built 40+ websites for Ethiopian businesses with Webflow.'}
+    ],
+    cohort:{name:'Cohort 1 · Addis Ababa', start:'2026-11-02', seats:25}
+  };
+}
+var state;
+try{
+  var raw = localStorage.getItem(KEY) || localStorage.getItem('wra_v5');
+  state = raw ? JSON.parse(raw) : null;
+  if(!state || !state.learners || !state.applicants) state = fresh();
+}catch(e){ state = fresh(); }
+var base = fresh();
+['mentors','demand','cohort'].forEach(function(k){ if(!state[k]) state[k] = base[k]; });
+if(!state.cp) state.cp = {};
+if(!state.assess) state.assess = {};
+if(!state.fx) state.fx = 150;
+if(!state.ap) state.ap = {};
+if(!state.payments) state.payments = [];
+if(!state.partners) state.partners = [];
+if(!state.plans) state.plans = base.plans;
+if(!state.payInfo) state.payInfo = {};
+if(!state.settings) state.settings = {siteUrl:'', vat:0};
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function getSess(){ try{ return JSON.parse(sessionStorage.getItem('wra_s') || 'null'); }catch(e){ return null; } }
+function setSess(v){ try{ if(v) sessionStorage.setItem('wra_s', JSON.stringify(v)); else sessionStorage.removeItem('wra_s'); }catch(e){} }
+
+/* ================= HELPERS ================= */
+function esc(s){
+  if(s === null || s === undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function uid(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function num(n){ return Number(n||0).toLocaleString(); }
+function money(n){ return num(Math.round(n)) + ' ETB'; }
+function $(id){ return document.getElementById(id); }
+function toast(m){
+  var el = $('toast'); el.textContent = m; el.className = 'on';
+  clearTimeout(el._t); el._t = setTimeout(function(){ el.className = ''; }, 2400);
+}
+function copyText(text, okMsg){
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    toast(ok ? okMsg : 'Copy failed. Select the text and copy it by hand.');
+  }
+  try{
+    navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, fallback);
+  }catch(e){ fallback(); }
+}
+function findLearner(code){ for(var i=0;i<state.learners.length;i++) if(state.learners[i].code === code) return state.learners[i]; return null; }
+function trackById(id){ for(var i=0;i<TRACKS.length;i++) if(TRACKS[i].id === id) return TRACKS[i]; return null; }
+function totalTasks(){ var n=0; CURR.forEach(function(w){ n += w.tasks.length; }); return n; }
+function doneTasks(l){ var n=0; if(l.done) for(var k in l.done) if(l.done[k]) n++; return n; }
+function prog(l){ return Math.round(doneTasks(l) / totalTasks() * 100); }
+function toEtb(it){ return Number(it.amount||0) * (it.currency === 'USD' ? state.fx : 1); }
+function income(l){ var s=0; (l.income||[]).forEach(function(it){ if(it.status === 'Paid') s += toEtb(it); }); return s; }
+function hours(l){ var s=0; (l.income||[]).forEach(function(it){ s += Number(it.hours||0); }); return s; }
+function rating(l){ var r = l.ratingList||[]; if(!r.length) return 0; var s=0; r.forEach(function(x){ s += x; }); return s / r.length; }
+function phaseOf(l){ var p = prog(l); return p < 25 ? 1 : p < 58 ? 2 : p < 92 ? 3 : 4; }
+function mentorFor(l){ for(var i=0;i<state.mentors.length;i++) if(state.mentors[i].track === l.track) return state.mentors[i]; return null; }
+function who(){ var s = getSess(); return s && s.role === 'learner' ? s.code : 'guest'; }
+function getCP(key){ var k = key || who(); if(!state.cp[k]) state.cp[k] = {}; return state.cp[k]; }
+function cpCount(cp, st){ var n=0; for(var k in cp) if(cp[k] === st && COURSE_BY[k]) n++; return n; }
+function verifiedSkills(l){
+  var out = [], p = prog(l), tr = trackById(l.track);
+  if(p >= 20) out.push('Digital literacy');
+  if(p >= 25) out.push('AI tools');
+  if(p >= 30) out.push('English for work');
+  if(p >= 35) out.push('Soft skills');
+  if(p >= 55 && tr) out.push(tr.name);
+  if(income(l) > 0) out.push('Client delivery');
+  return out;
+}
+function studySkills(l){
+  var cp = getCP(l.code), counts = {}, out = [];
+  for(var k in cp){ if(cp[k] === 'done' && COURSE_BY[k]){ var s = COURSE_BY[k].skill; counts[s] = (counts[s]||0) + 1; } }
+  SKILLS.forEach(function(s){ if(counts[s.id] >= 2) out.push(s.name); });
+  return out;
+}
+function relevantTrack(c, track){ return c.tracks.indexOf('all') > -1 || (track && c.tracks.indexOf(track) > -1); }
+
+/* ================= COURSE UI ================= */
+var CF = {q:'', track:'', skill:'', sec:'', level:'', low:false, mine:'', view:'library', path:'foundation'};
+
+function statusBtns(c){
+  var cp = getCP(), cur = cp[c.id];
+  function b(st, label){
+    return '<button class="btn sm ghost' + (cur === st ? ' on' : '') + '" data-act="cs" data-cid="' + c.id + '" data-st="' + st + '" aria-pressed="' + (cur === st) + '">' + label + '</button>';
+  }
+  return b('saved','Save') + b('started','Started') + b('done','Done');
+}
+function courseCard(c){
+  var cur = getCP()[c.id];
+  var h = '<article class="course' + (cur === 'done' ? ' done' : '') + '" id="cc-' + c.id + '">';
+  h += '<div class="tags"><span class="pill ok">' + esc(SKILL_BY[c.skill].name) + '</span><span class="pill">' + esc(c.level) + '</span>';
+  if(c.low) h += '<span class="pill gold">Low data</span>';
+  if(c.off) h += '<span class="pill gold">Offline</span>';
+  h += '</div>';
+  h += '<h3>' + esc(c.title) + '</h3><p class="prov">' + esc(c.prov) + '</p>';
+  var wk = c.wk.length ? ' · Weeks ' + c.wk.join(', ') : '';
+  var tr = c.tracks.indexOf('all') > -1 ? 'All tracks' : c.tracks.indexOf('none') > -1 ? (c.sec || 'Open to all sectors') : c.tracks.map(function(t){ var x = trackById(t); return x ? x.name : t; }).join(', ');
+  h += '<div class="meta">' + esc(c.cost) + wk + '<br>' + esc(tr) + '</div>';
+  h += '<div class="acts"><a class="btn sm" href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer">Open course ↗</a>' + statusBtns(c) + '</div>';
+  return h + '</article>';
+}
+function filtered(){
+  var q = CF.q.trim().toLowerCase(), cp = getCP();
+  var list = COURSES.filter(function(c){
+    if(CF.track && !relevantTrack(c, CF.track)) return false;
+    if(CF.skill && c.skill !== CF.skill) return false;
+    if(CF.sec && c.sec !== CF.sec) return false;
+    if(CF.level && c.level !== CF.level) return false;
+    if(CF.low && !(c.low || c.off)) return false;
+    if(CF.mine && cp[c.id] !== CF.mine) return false;
+    if(q){
+      var hay = (c.title + ' ' + c.prov + ' ' + SKILL_BY[c.skill].name + ' ' + c.cost).toLowerCase();
+      var parts = q.split(/\s+/);
+      for(var i=0;i<parts.length;i++) if(hay.indexOf(parts[i]) < 0) return false;
+    }
+    return true;
+  });
+  if(CF.track) list.sort(function(a,b){ return (a.tracks.indexOf('all')>-1 ? 1:0) - (b.tracks.indexOf('all')>-1 ? 1:0); });
+  return list;
+}
+function listHTML(){
+  var list = filtered();
+  if(!list.length) return '<div class="card"><p>No courses match these filters. Clear the search or choose another track.</p></div>';
+  return '<p class="note" aria-live="polite">' + list.length + ' of ' + COURSES.length + ' courses</p><div class="grid">' + list.map(courseCard).join('') + '</div>';
+}
+function myStatsHTML(){
+  var cp = getCP();
+  return '<div class="grid s">'
+    + '<div class="stat"><b>' + COURSES.length + '</b><span>Free courses and resources</span></div>'
+    + '<div class="stat"><b>' + cpCount(cp,'saved') + '</b><span>Saved</span></div>'
+    + '<div class="stat"><b>' + cpCount(cp,'started') + '</b><span>In progress</span></div>'
+    + '<div class="stat"><b>' + cpCount(cp,'done') + '</b><span>Completed</span></div></div>';
+}
+function pathHTML(key, track){
+  var p = PATHS[key]; if(!p) return '';
+  var cp = getCP(), done = 0;
+  p.ids.forEach(function(id){ if(cp[id] === 'done') done++; });
+  var pct = Math.round(done / p.ids.length * 100), nextShown = false;
+  var h = '<div class="card"><div class="row between"><h3>' + esc(p.name) + '</h3><span class="pill ' + (pct === 100 ? 'ok' : '') + '">' + done + ' of ' + p.ids.length + ' done</span></div>';
+  h += '<div class="bar" style="margin:10px 0 12px"><i style="width:' + pct + '%"></i></div><ol class="plist">';
+  p.ids.forEach(function(id, i){
+    var c = COURSE_BY[id]; if(!c) return;
+    var st = cp[id], isNext = !nextShown && st !== 'done';
+    if(isNext) nextShown = true;
+    h += '<li class="' + (st === 'done' ? 'done' : '') + '" id="cc-' + id + '-p"><span class="k">' + (st === 'done' ? '✓' : (i+1)) + '</span><div style="min-width:0;flex:1">';
+    h += '<a href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer"><b>' + esc(c.title) + '</b> ↗</a>';
+    h += '<div class="note">' + esc(c.prov) + ' · ' + esc(c.level) + ' · ' + esc(c.cost) + (isNext ? ' · <b style="color:var(--gold)">Up next</b>' : '') + '</div>';
+    h += '<div class="row" style="gap:6px;margin-top:6px">' + statusBtns(c) + '</div></div></li>';
+  });
+  return h + '</ol></div>';
+}
+function viewCourses(){
+  var h = '<h1>Free course library</h1>';
+  h += '<p style="max-width:62ch">' + COURSES.length + ' free courses, labs and practice sites from universities, Google, Microsoft, AWS, Cisco, Meta and others, mapped to the 12-week programme and to each specialization track. You do not need an account to save progress. Sign in as a learner and your list is attached to your passport.</p>';
+  h += '<div id="mystats">' + myStatsHTML() + '</div>';
+  h += '<div class="tabs"><button class="btn sm ' + (CF.view === 'library' ? '' : 'ghost') + '" data-act="cview" data-v="library">Library</button>';
+  h += '<button class="btn sm ' + (CF.view === 'paths' ? '' : 'ghost') + '" data-act="cview" data-v="paths">Learning paths</button>';
+  h += '<button class="btn sm ' + (CF.view === 'tools' ? '' : 'ghost') + '" data-act="cview" data-v="platforms">Platforms for every sector</button>';
+  h += '<button class="btn sm ' + (CF.view === 'tools' ? '' : 'ghost') + '" data-act="cview" data-v="tools">Get paid</button><a class="btn sm ghost" href="#jobs">Jobs</a></div>';
+  if(CF.view === 'paths'){
+    h += '<div class="row" style="margin-bottom:12px">';
+    Object.keys(PATHS).forEach(function(k){
+      h += '<button class="chip' + (CF.path === k ? ' on' : '') + '" data-act="cpath" data-k="' + esc(k) + '" style="cursor:pointer">' + esc(PATHS[k].name) + '</button>';
+    });
+    h += '</div><div id="pathbox">' + pathHTML(CF.path) + '</div>';
+    h += '<p class="note">Paths follow the order we recommend. Open a course in a new tab, then mark it Started or Done here.</p>';
+    return h;
+  }
+  if(CF.view === 'platforms') return h + platformsHTML();
+  if(CF.view === 'tools'){
+    h += '<h2 style="margin-top:8px">Get paid and find work</h2><div class="grid">';
+    GET_PAID.forEach(function(g){
+      h += '<div class="card"><h3>' + esc(g[0]) + '</h3><p>' + esc(g[2]) + '</p><a class="btn sm" href="' + esc(g[1]) + '" target="_blank" rel="noopener noreferrer">Visit ' + esc(g[0]) + ' ↗</a></div>';
+    });
+    h += '</div><p class="note">Check each service\'s current rules for Ethiopia before you rely on it. Week 2 of the programme covers Telebirr, CBE Birr, Payoneer and Wise setup.</p>';
+    return h;
+  }
+  h += '<div class="card"><div class="filters">';
+  h += '<div><label for="fq">Search</label><input id="fq" type="search" placeholder="Excel, SQL, English, prompts" value="' + esc(CF.q) + '"></div>';
+  h += '<div><label for="ftrack">Track</label><select id="ftrack"><option value="">All tracks</option>' + TRACKS.map(function(t){ return '<option value="' + t.id + '"' + (CF.track === t.id ? ' selected' : '') + '>' + esc(t.name) + '</option>'; }).join('') + '</select></div>';
+  h += '<div><label for="fskill">Skill</label><select id="fskill"><option value="">All skills</option>' + SKILLS.concat([SKILL_BY.domain]).map(function(s){ return '<option value="' + s.id + '"' + (CF.skill === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select></div>';
+  h += '<div><label for="flevel">Level</label><select id="flevel"><option value="">Any level</option>' + ['Beginner','Intermediate','Advanced'].map(function(v){ return '<option' + (CF.level === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></div>';
+  h += '<div><label for="fsec">Sector</label><select id="fsec"><option value="">All sectors</option>' + SECTOR_LABELS.map(function(v){ return '<option' + (CF.sec === v ? ' selected' : '') + '>' + esc(v) + '</option>'; }).join('') + '</select></div>';
+  h += '<div><label for="fmine">My list</label><select id="fmine"><option value="">All courses</option>' + [['saved','Saved'],['started','In progress'],['done','Completed']].map(function(v){ return '<option value="' + v[0] + '"' + (CF.mine === v[0] ? ' selected' : '') + '>' + v[1] + '</option>'; }).join('') + '</select></div>';
+  h += '</div><label class="task" for="flow" style="margin:0"><input id="flow" type="checkbox"' + (CF.low ? ' checked' : '') + '> Only text-based or offline-friendly (best on a phone with little data)</label></div>';
+  h += '<div id="clist">' + listHTML() + '</div>';
+  return h;
+}
+function refreshCourseUI(cid){
+  var r = route();
+  if(r === 'courses'){
+    var ml = $('mystats'); if(ml) ml.innerHTML = myStatsHTML();
+    if(CF.view === 'paths'){ var pb = $('pathbox'); if(pb) pb.innerHTML = pathHTML(CF.path); return; }
+    if(CF.view === 'library' && !CF.mine){
+      var el = $('cc-' + cid);
+      if(el){ el.outerHTML = courseCard(COURSE_BY[cid]); return; }
+    }
+    if(CF.view === 'library'){ var cl = $('clist'); if(cl) cl.innerHTML = listHTML(); return; }
+  }
+  rerender(true);
+}
+
+/* ================= SKILL CHECK ================= */
+var SK = {mode:'me'};
+function ratings(){
+  var k = who(), cur = state.assess[k] || {}, out = {};
+  SKILLS.forEach(function(s){ out[s.id] = cur[s.id] || 3; });
+  return out;
+}
+function gapsList(r){
+  var tr = null, s = getSess();
+  if(s && s.role === 'learner'){ var l = findLearner(s.code); if(l) tr = l.track; }
+  var arr = SKILLS.map(function(s){ return {s:s, r:r[s.id], gap:5 - r[s.id]}; });
+  arr.sort(function(a,b){ return b.gap - a.gap; });
+  arr.forEach(function(g){
+    var target = g.r <= 2 ? 1 : g.r === 3 ? 2 : 3;
+    var pool = COURSES.filter(function(c){ return c.skill === g.s.id; });
+    pool.sort(function(a,b){
+      var da = Math.abs(LEVEL_RANK[a.level] - target) * 2 - (relevantTrack(a, tr) && a.tracks.indexOf('all') < 0 ? 1 : 0);
+      var db = Math.abs(LEVEL_RANK[b.level] - target) * 2 - (relevantTrack(b, tr) && b.tracks.indexOf('all') < 0 ? 1 : 0);
+      return da - db;
+    });
+    g.picks = pool.slice(0,3);
+  });
+  return arr;
+}
+function skillResultsHTML(){
+  var r = ratings(), gl = gapsList(r), team = SK.mode === 'team';
+  var top = gl.filter(function(g){ return g.gap >= 2; }).slice(0,3);
+  if(!top.length) top = gl.slice(0,3);
+  var h = '<h2 style="margin-top:0">' + (team ? 'Team gaps, largest first' : 'Your gaps, largest first') + '</h2><div class="card">';
+  gl.forEach(function(g){
+    h += '<div style="margin-bottom:8px"><div class="row between"><b>' + esc(g.s.name) + '</b><span class="note">level ' + g.r + ' of 5 · gap ' + g.gap + '</span></div><div class="gapbar" aria-hidden="true"><i style="width:' + (g.gap / 4 * 100) + '%"></i></div></div>';
+  });
+  h += '</div><h2>Four-week plan</h2>';
+  var wk = [[top[0],'Weeks 1-2'],[top[1],'Week 3'],[top[2],'Week 4']];
+  wk.forEach(function(p){
+    if(!p[0]) return;
+    var g = p[0];
+    h += '<div class="card"><div class="row between"><h3>' + p[1] + ': ' + esc(g.s.name) + '</h3><span class="pill gold">Gap ' + g.gap + '</span></div><p class="note">' + esc(g.s.note) + '</p><ul class="plist">';
+    g.picks.forEach(function(c){
+      h += '<li><div style="min-width:0;flex:1"><a href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer"><b>' + esc(c.title) + '</b> ↗</a><div class="note">' + esc(c.prov) + ' · ' + esc(c.level) + ' · ' + esc(c.cost) + '</div></div></li>';
+    });
+    h += '</ul></div>';
+  });
+  h += '<button class="btn ghost" data-act="skcopy">Copy summary</button>';
+  return h;
+}
+function viewSkills(){
+  var r = ratings(), team = SK.mode === 'team';
+  var h = '<h1>Skill gap check</h1>';
+  h += '<p style="max-width:62ch">Rate each area from 1 (new to it) to 5 (can teach others). You get the largest gaps first, with free courses matched to your level. The eight areas come from the global skills research: AI, data, cybersecurity, cloud, thinking, communication and adaptability, plus everyday digital tools.</p>';
+  h += '<div class="tabs"><button class="btn sm ' + (team ? 'ghost' : '') + '" data-act="skmode" data-m="me">Assess myself</button><button class="btn sm ' + (team ? '' : 'ghost') + '" data-act="skmode" data-m="team">Assess my team (employers)</button></div>';
+  h += '<div class="card">';
+  SKILLS.forEach(function(s){
+    h += '<div class="slider"><div class="top2"><label for="sk-' + s.id + '">' + esc(s.name) + '</label><output id="skv-' + s.id + '">' + r[s.id] + '</output></div>';
+    h += '<input type="range" min="1" max="5" step="1" id="sk-' + s.id + '" data-skill="' + s.id + '" value="' + r[s.id] + '"><div class="ends"><span>New to it</span><span>Can teach others</span></div></div>';
+  });
+  h += '<p class="note" style="margin-top:10px">Starting values are examples. Move each slider to your real level' + (team ? ' (use your team\'s average)' : '') + '.</p></div>';
+  h += '<div id="skres">' + skillResultsHTML() + '</div>';
+  return h;
+}
+function skillSummaryText(){
+  var gl = gapsList(ratings()).slice(0,3), t = (SK.mode === 'team' ? 'Team' : 'My') + ' skill gaps (WorkReady AI)\n';
+  gl.forEach(function(g, i){
+    t += (i+1) + '. ' + g.s.name + ' (level ' + g.r + '/5)\n';
+    g.picks.forEach(function(c){ t += '   - ' + c.title + ' (' + c.prov + '): ' + c.url + '\n'; });
+  });
+  return t;
+}
+
+/* ================= ACCESS, ACADEMY, STUDIO, PRICING ================= */
+var ACAD_BY = {}; ACAD.forEach(function(c){ ACAD_BY[c.id] = c; });
+var AC = {aud:'', cid:'', li:0};
+var SS = {tab:'build', lib:'', vals:{sector:'education', dtype:'policy', audience:'', decision:'', context:'', constraints:'', timeframe:'', region:'Ethiopia', depth:'standard'}, brief:{}};
+var EVIDENCE_RULES = "EVIDENCE RULES\n- Use web search if available. Cite every factual claim with source title, publisher, date and link.\n- Label each claim established, likely or uncertain, and keep facts, inferences and opinions separate.\n- Prefer sources from the last 3 years and flag older ones.\n- If you cannot find evidence, say so. Do not invent sources, numbers or quotes.";
+
+function curLearner(){ var s = getSess(); return s && s.role === 'learner' ? findLearner(s.code) : null; }
+function hasAccess(l){ return !!(l && l.access); }
+function getAP(key){ var k = key || who(); if(!state.ap[k]) state.ap[k] = {}; return state.ap[k]; }
+function apCourse(cid){ var a = getAP(); if(!a[cid]) a[cid] = {done:{}, quiz:null}; return a[cid]; }
+function apDone(cid, key){ var c = getAP(key)[cid], n = 0; if(!c) return 0; for(var k in c.done) if(c.done[k]) n++; return n; }
+function acadDone(key){ return ACAD.filter(function(c){ return apDone(c.id, key) >= c.lessons.length; }); }
+function planById(id){ for(var i=0;i<state.plans.length;i++) if(state.plans[i].id === id) return state.plans[i]; return null; }
+function fmtPrice(p){ return p.price ? num(p.price) + ' ' + p.cur + (p.per ? ' ' + p.per : '') : 'Free'; }
+function findPartner(code){ for(var i=0;i<state.partners.length;i++) if(state.partners[i].code === code) return state.partners[i]; return null; }
+function sectorById(id){ for(var i=0;i<SECTORS.length;i++) if(SECTORS[i].id === id) return SECTORS[i]; return SECTORS[0]; }
+function dtypeById(id){ for(var i=0;i<DTYPES.length;i++) if(DTYPES[i].id === id) return DTYPES[i]; return DTYPES[0]; }
+function paras(arr){
+  var h = '', inList = false;
+  arr.forEach(function(s){
+    if(s.indexOf('• ') === 0){ if(!inList){ h += '<ul class="lb">'; inList = true; } h += '<li>' + esc(s.slice(2)) + '</li>'; }
+    else { if(inList){ h += '</ul>'; inList = false; } h += '<p>' + esc(s) + '</p>'; }
+  });
+  return h + (inList ? '</ul>' : '');
+}
+function audPills(c){ return c.aud.map(function(a){ return '<span class="pill ok">' + esc(a) + '</span>'; }).join(''); }
+function demoBanner(){
+  var l = curLearner();
+  if(hasAccess(l)) return '';
+  return '<div class="card" style="border-color:var(--gold)"><div class="row between"><div style="min-width:0;flex:1"><b>You are on the free demo.</b><p class="note" style="margin:2px 0 0">' + (l ? 'Lesson 1 of every course is open. Everything else unlocks once your payment is verified.' : 'Lesson 1 of every course is open to anyone. Apply free to keep progress in a passport, then unlock the rest.') + '</p></div><a class="btn sm" href="#pricing">See plans</a></div></div>';
+}
+
+/* ---------- Academy ---------- */
+function viewAcademy(){
+  if(AC.cid && ACAD_BY[AC.cid]) return viewReader(ACAD_BY[AC.cid]);
+  var h = '<h1>WorkReady Academy</h1><p style="max-width:64ch">' + ACAD.length + ' courses written and taught on this platform for NGOs, schools, school leaders, education experts, executives and senior leaders. Everything is delivered here, with no links to outside sites. Lesson 1 of every course is a free demo.</p>' + demoBanner();
+  h += '<div class="row" style="margin-bottom:12px"><button class="chip' + (AC.aud ? '' : ' on') + '" style="cursor:pointer" data-act="aaud" data-a="">All audiences</button>';
+  ACAD_AUD.forEach(function(a){ h += '<button class="chip' + (AC.aud === a ? ' on' : '') + '" style="cursor:pointer" data-act="aaud" data-a="' + esc(a) + '">' + esc(a) + '</button>'; });
+  h += '</div><div class="grid">';
+  ACAD.filter(function(c){ return !AC.aud || c.aud.indexOf(AC.aud) > -1; }).forEach(function(c){
+    var d = apDone(c.id), pct = Math.round(d / c.lessons.length * 100);
+    h += '<article class="course"><div class="tags">' + audPills(c) + '</div><h3>' + esc(c.title) + '</h3><p class="prov">' + esc(c.sum) + '</p>';
+    h += '<div class="meta">' + esc(c.level) + ' · about ' + c.hrs + ' hours · ' + c.lessons.length + ' lessons and a quiz</div>';
+    h += '<div class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>';
+    h += '<div class="acts"><button class="btn sm" data-act="aopen" data-cid="' + c.id + '">' + (d ? (pct === 100 ? 'Review course' : 'Continue') : 'Open free demo lesson') + '</button><span class="note">' + d + ' of ' + c.lessons.length + ' done</span></div></article>';
+  });
+  h += '</div>';
+  var tr = state.partners.filter(function(p){ return p.type === 'trainer' && p.status === 'approved'; });
+  h += '<h2>Community trainers</h2>';
+  if(tr.length){
+    h += '<div class="grid">' + tr.map(function(p){ return '<div class="card"><h3>' + esc(p.org || p.name) + '</h3><p>' + esc((p.details && p.details.topics) || '') + '</p><p class="note">' + esc(p.city || '') + '</p></div>'; }).join('') + '</div>';
+  } else h += '<div class="card"><p>No trainers listed yet. Trainers can <a href="#apply">apply</a> and be listed after approval.</p></div>';
+  return h;
+}
+function viewReader(c){
+  var l = curLearner(), access = hasAccess(l), ap = getAP()[c.id] || {done:{}, quiz:null};
+  var i = Math.max(0, Math.min(AC.li, c.lessons.length - 1)), les = c.lessons[i];
+  var d = apDone(c.id), pct = Math.round(d / c.lessons.length * 100);
+  var h = '<button class="btn sm ghost" data-act="aback">All courses</button>';
+  h += '<h1 style="margin:14px 0 8px">' + esc(c.title) + '</h1><div class="tags" style="margin-bottom:8px">' + audPills(c) + '<span class="pill">' + esc(c.level) + '</span><span class="pill">About ' + c.hrs + ' hours</span></div>';
+  h += '<div class="row between" style="margin-bottom:6px"><span class="note">' + d + ' of ' + c.lessons.length + ' lessons complete</span><b>' + pct + '%</b></div><div class="bar" style="margin-bottom:16px"><i style="width:' + pct + '%"></i></div>';
+  if(!access) h += demoBanner();
+  h += '<div class="reader"><aside><div class="card"><h3 style="margin-bottom:8px">Lessons</h3><ol class="plist">';
+  c.lessons.forEach(function(x, k){
+    var lock = k > 0 && !access;
+    h += '<li class="' + (ap.done[k] ? 'done' : '') + '"><span class="k">' + (ap.done[k] ? '✓' : (k + 1)) + '</span><div style="min-width:0"><button class="linkbtn' + (k === i ? ' cur' : '') + '" data-act="lesson" data-i="' + k + '">' + esc(x.t) + '</button>' + (lock ? ' <span class="pill gold">Locked</span>' : '') + '</div></li>';
+  });
+  h += '</ol></div><div class="card"><h3 style="margin-bottom:6px">You will be able to</h3><ul class="lb">' + c.out.map(function(o){ return '<li>' + esc(o) + '</li>'; }).join('') + '</ul></div></aside><section style="min-width:0">';
+  if(i > 0 && !access){
+    h += '<div class="card"><span class="pill gold">Locked</span><h2 style="margin:10px 0 6px">' + esc(les.t) + '</h2><p>This lesson is part of the full course. Lesson 1 is a free demo. Choose a plan, send your payment reference, and it opens as soon as your payment is verified.</p><div class="row"><a class="btn" href="#pricing">See plans</a><button class="btn ghost" data-act="lesson" data-i="0">Back to the free lesson</button></div></div>';
+  } else {
+    h += '<div class="card lessonbody"><span class="pill ok">Lesson ' + (i + 1) + ' of ' + c.lessons.length + (i === 0 && !access ? ' · free demo' : '') + '</span><h2 style="margin:10px 0 10px">' + esc(les.t) + '</h2>' + paras(les.p);
+    h += '<div class="actbox"><b>Try it</b><p>' + esc(les.act) + '</p></div>';
+    h += '<div class="row" style="margin-top:14px"><button class="btn' + (ap.done[i] ? ' ghost' : '') + '" data-act="ldone">' + (ap.done[i] ? 'Marked complete. Undo' : 'Mark lesson complete') + '</button>';
+    if(i > 0) h += '<button class="btn ghost" data-act="lnav" data-d="-1">Previous</button>';
+    if(i < c.lessons.length - 1) h += '<button class="btn ghost" data-act="lnav" data-d="1">Next lesson</button>';
+    h += '</div></div>';
+  }
+  h += '<h2>Check your understanding</h2>';
+  if(!access) h += '<div class="card"><p>The quiz unlocks with the full course.</p></div>';
+  else {
+    h += '<div class="card"><form id="quizForm">';
+    c.quiz.forEach(function(q, qi){
+      h += '<fieldset class="qf"><legend>' + (qi + 1) + '. ' + esc(q.q) + '</legend>';
+      q.o.forEach(function(o, oi){ h += '<label class="task"><input type="radio" name="aq' + qi + '" value="' + oi + '" id="aq' + qi + '-' + oi + '"> ' + esc(o) + '</label>'; });
+      h += '</fieldset>';
+    });
+    h += '<button class="btn" type="submit">Check answers</button></form>';
+    if(ap.quiz){
+      h += '<p style="margin-top:12px;color:var(--fg)"><b>Last score: ' + ap.quiz.score + ' of ' + ap.quiz.total + '.</b></p>';
+      (ap.quiz.wrong || []).forEach(function(qi){ var q = c.quiz[qi]; if(q) h += '<p class="note">Question ' + (qi + 1) + ': the correct answer is "' + esc(q.o[q.a]) + '".</p>'; });
+    }
+    h += '</div>';
+  }
+  if(d >= c.lessons.length) h += '<div class="card" style="border-color:var(--ok)"><b style="color:var(--ok)">Course complete.</b><p style="margin:4px 0 0">It now appears in your Skills Passport as a WorkReady Academy completion. This is a record of learning on this platform, not an accredited qualification.</p></div>';
+  return h + '</section></div>';
+}
+
+/* ---------- Insight Studio ---------- */
+function buildPrompt(v){
+  var sec = sectorById(v.sector), dt = dtypeById(v.dtype), deep = v.depth === 'deep';
+  var t = "ROLE\nYou are a senior research analyst in the " + sec.name + " sector advising " + (v.audience || "a senior decision-maker") + ".\n\n";
+  t += "DECISION TO SUPPORT\n" + (v.decision || "[Write the decision as a question, e.g. Should we ...?]") + "\n\n";
+  t += "CONTEXT\n" + (v.context || "[Who we are, size, location, what has been tried]") + "\n\n";
+  t += "CONSTRAINTS\n" + (v.constraints || "[Budget, time, skills, legal or political limits]") + "\n\n";
+  t += "DECISION DEADLINE\n" + (v.timeframe || "[Date]") + "\n\n";
+  t += "SCOPE\nStart with global evidence and best practice, then narrow to " + (v.region || "my region") + ". Say clearly where evidence for my region is missing.\n\n";
+  t += "TASK\n1. Restate the decision as a question and list the assumptions you are making.\n2. Summarize what the best global evidence says, and where experts disagree.\n3. Use these frameworks where they help: " + dt.frames + ".\n4. Present three realistic options, including doing nothing or a small pilot. For each give expected benefits, costs, risks and what must be true for it to work.\n5. Recommend one option and explain why. State what evidence would change your recommendation.\n";
+  t += deep ? "6. Run a pre-mortem: assume the recommendation failed in a year and list the most likely reasons.\n7. Give a 30-60-90 day action plan with owners and measures.\n8. List the open questions I should answer before deciding.\n" : "6. Give a 30-60-90 day action plan.\n";
+  t += "\nEVIDENCE RULES\n- Use web search if available. Today is " + today() + ". Prefer sources from the last 3 years and flag older ones.\n- Prioritise: " + sec.src.join("; ") + ".\n- For every factual claim give the source title, publisher, date and link.\n- Label each claim established, likely or uncertain.\n- Keep facts, inferences and opinions separate.\n- If you cannot find evidence, say so. Do not invent sources, numbers or quotes.\n\n";
+  t += "OUTPUT FORMAT\nA decision brief of " + (deep ? "about 2 pages" : "no more than 1 page") + " with these headings: Decision, Bottom line, Options table, Evidence table (claim | source | date | confidence), Risks, Recommendation, Next steps. Write in plain language for a busy reader.";
+  return t;
+}
+function briefMarkdown(b){
+  function s(x, ph){ return x && x.trim() ? x.trim() : ph; }
+  return "# Decision brief: " + s(b.title, "[Title]") + "\n\n**Decision needed by:** " + s(b.deadline, "[Date]") + "  \n**Prepared for:** " + s(b.reader, "[Name or body]") + "\n\n## Decision\n" + s(b.decision, "[The question to be decided]") + "\n\n## Bottom line\n" + s(b.bottom, "[Recommendation in two sentences]") + "\n\n## Context\n" + s(b.context, "[Why this decision, why now]") + "\n\n## Options\n| Option | Benefits | Costs | Risks |\n|---|---|---|---|\n| A. " + s(b.optA, "[Option A]") + " | | | |\n| B. " + s(b.optB, "[Option B]") + " | | | |\n| C. " + s(b.optC, "[Option C, or do nothing]") + " | | | |\n\n## Evidence\n" + s(b.evidence, "| Claim | Source | Date | Confidence |\n|---|---|---|---|") + "\n\n## Risks and how to reduce them\n" + s(b.risks, "[Top three risks, owner, early-warning sign]") + "\n\n## Recommendation\n" + s(b.rec, "[Chosen option and why]") + "\n\n## Next steps (30-60-90 days)\n" + s(b.next, "[Action, owner, date]") + "\n\n*Sources checked by: [name], on [date].*";
+}
+function libHTML(){
+  var list = PROMPT_LIB.filter(function(p){ return !SS.lib || p.sector === SS.lib; });
+  if(!list.length) return '<div class="card"><p>No prompts for this sector yet.</p></div>';
+  return '<div class="grid">' + list.map(function(p){
+    var sec = sectorById(p.sector);
+    return '<article class="course"><div class="tags"><span class="pill ok">' + esc(sec.name) + '</span></div><h3>' + esc(p.title) + '</h3><p class="ptext" id="pl-' + p.id + '">' + esc(p.text) + '</p><div class="acts"><button class="btn sm" data-act="copy" data-el="pl-' + p.id + '">Copy prompt</button></div></article>';
+  }).join('') + '</div>';
+}
+function viewStudio(){
+  var v = SS.vals, h = '<h1>Insight Studio</h1><p style="max-width:64ch">Turn a leadership question into a research prompt that asks for global evidence, sources and dates, then organize the answers into a decision brief. The studio builds the prompt. You run it in an AI assistant with web search, such as Claude, ChatGPT or Gemini, and check the sources before you rely on them.</p>';
+  h += '<div class="tabs">' + [['build','Prompt builder'],['library','Prompt library'],['brief','Decision brief']].map(function(t){ return '<button class="btn sm ' + (SS.tab === t[0] ? '' : 'ghost') + '" data-act="stab" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
+  if(SS.tab === 'build'){
+    h += '<div class="card"><form id="builderForm"><div class="fr">';
+    h += '<div><label for="b-sector">Sector</label><select id="b-sector">' + SECTORS.map(function(s){ return '<option value="' + s.id + '"' + (v.sector === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select></div>';
+    h += '<div><label for="b-dtype">Type of decision</label><select id="b-dtype">' + DTYPES.map(function(s){ return '<option value="' + s.id + '"' + (v.dtype === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select></div>';
+    h += '<div><label for="b-depth">Depth</label><select id="b-depth"><option value="standard"' + (v.depth === 'standard' ? ' selected' : '') + '>Standard (1 page)</option><option value="deep"' + (v.depth === 'deep' ? ' selected' : '') + '>Deep (2 pages, pre-mortem)</option></select></div></div>';
+    h += '<div class="fr"><div><label for="b-audience">Who is the decision-maker?</label><input id="b-audience" placeholder="the board, a minister, our donor" value="' + esc(v.audience) + '"></div><div><label for="b-region">Region to focus on</label><input id="b-region" value="' + esc(v.region) + '"></div><div><label for="b-timeframe">Decision deadline</label><input id="b-timeframe" placeholder="31 March" value="' + esc(v.timeframe) + '"></div></div>';
+    h += '<label for="b-decision">Decision, written as a question</label><textarea id="b-decision" placeholder="Should we introduce a catch-up reading programme in Grades 3-5?">' + esc(v.decision) + '</textarea>';
+    h += '<label for="b-context">Context</label><textarea id="b-context" placeholder="Who we are, how many people, what we have tried">' + esc(v.context) + '</textarea>';
+    h += '<label for="b-constraints">Constraints</label><textarea id="b-constraints" placeholder="Budget, staff, time, rules">' + esc(v.constraints) + '</textarea></form></div>';
+    h += '<h2>Your prompt</h2><div class="card"><textarea id="b-out" readonly style="min-height:300px;font-family:var(--f-mono);font-size:12.5px">' + esc(buildPrompt(v)) + '</textarea><div class="row"><button class="btn" data-act="copy" data-el="b-out">Copy prompt</button><a class="btn ghost" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Open Claude ↗</a><a class="btn ghost" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Open ChatGPT ↗</a><a class="btn ghost" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Open Gemini ↗</a></div></div>';
+    h += '<h2>Before you decide</h2><div class="card"><ol class="steps"><li><b>Open the sources.</b> Check each link exists and says what the answer claims.</li><li><b>Cross-check key numbers</b> with a second independent source.</li><li><b>Ask for a challenge.</b> Run: "List the five weakest claims in your answer and how to test them."</li><li><b>Remove or label</b> anything you cannot verify, then use the Decision brief tab.</li></ol></div>';
+  } else if(SS.tab === 'library'){
+    h += '<div class="card"><label for="lib-sector">Sector</label><select id="lib-sector" style="max-width:320px"><option value="">All sectors</option>' + SECTORS.map(function(s){ return '<option value="' + s.id + '"' + (SS.lib === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select><p class="note" style="margin:0">Replace the [BRACKETS] with your details. Add the evidence rules below to any prompt.</p></div>';
+    h += '<div id="libgrid">' + libHTML() + '</div>';
+    h += '<h2>Evidence rules to add to any prompt</h2><div class="card"><p class="ptext" id="ev-rules" style="white-space:pre-wrap">' + esc(EVIDENCE_RULES) + '</p><button class="btn sm" data-act="copy" data-el="ev-rules">Copy rules</button></div>';
+  } else {
+    var b = SS.brief;
+    h += '<div class="card"><form id="briefForm"><div class="fr"><div><label for="d-title">Title</label><input id="d-title" value="' + esc(b.title || '') + '"></div><div><label for="d-reader">Prepared for</label><input id="d-reader" value="' + esc(b.reader || '') + '"></div><div><label for="d-deadline">Decision needed by</label><input id="d-deadline" value="' + esc(b.deadline || '') + '"></div></div>';
+    [['decision','Decision (a question)'],['bottom','Bottom line'],['context','Context'],['optA','Option A'],['optB','Option B'],['optC','Option C or do nothing'],['evidence','Evidence (claim, source, date, confidence)'],['risks','Risks and how to reduce them'],['rec','Recommendation'],['next','Next steps']].forEach(function(f){
+      h += '<label for="d-' + f[0] + '">' + f[1] + '</label><textarea id="d-' + f[0] + '">' + esc(b[f[0]] || '') + '</textarea>';
+    });
+    h += '</form></div><h2>Brief</h2><div class="card"><textarea id="brief-out" readonly style="min-height:260px;font-family:var(--f-mono);font-size:12.5px">' + esc(briefMarkdown(b)) + '</textarea><button class="btn" data-act="copy" data-el="brief-out">Copy brief</button></div>';
+  }
+  return h;
+}
+
+/* ---------- Pricing and checkout ---------- */
+function viewPricing(){
+  var h = '<h1>Plans and payment</h1><p style="max-width:64ch">Anyone can apply, and there is no limit on the number of applicants. Start with the free demo. When you are ready, choose a plan, pay with a method below and send us the payment reference. Access opens when we verify the payment.</p>';
+  h += '<div class="grid">';
+  state.plans.forEach(function(p){
+    h += '<div class="card" style="' + (p.id === 'demo' ? 'border-color:var(--accent)' : '') + '"><span class="pill ' + (p.price ? 'gold' : 'ok') + '">' + esc(p.who) + '</span><h3 style="margin-top:10px">' + esc(p.name) + '</h3><div style="font:700 24px var(--f-mono);margin:6px 0;color:var(--fg)">' + esc(fmtPrice(p)) + '</div><ul class="lb">' + p.feats.map(function(f){ return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>';
+    h += p.price ? '<button class="btn sm" data-act="pickplan" data-p="' + p.id + '">Choose this plan</button>' : '<a class="btn sm" href="#apply">Start free demo</a>';
+    h += '</div>';
+  });
+  h += '</div><p class="note">Prices are set by the programme team and can change. Scholarship and pay-after-placement requests are considered: apply first, then contact us.</p>';
+  h += '<h2>How payment works</h2><div class="card"><ol class="steps"><li><b>Apply free</b> to get your code (learner, employer, trainer or organization).</li><li><b>Pay</b> with Telebirr, CBE Birr, bank transfer, M-Pesa or an international transfer using the details below.</li><li><b>Send your reference</b> in the form on this page.</li><li><b>We verify</b> the payment by hand. Your access opens once it is marked verified, and you can see the status in your dashboard.</li></ol></div>';
+  h += '<h2>Where to send payment</h2><div class="card scroll"><table><tr><th>Method</th><th>Send to</th></tr>' + PAY_METHODS.map(function(m){ var v = state.payInfo[m]; return '<tr><td><b>' + esc(m) + '</b></td><td>' + (v ? esc(v) : '<span class="note">Not set yet. Contact the programme team.</span>') + '</td></tr>'; }).join('') + '</table></div>';
+  var paid = state.plans.filter(function(p){ return p.price > 0; });
+  h += '<h2 id="checkout">Send your payment reference</h2><div class="card" style="max-width:640px"><form id="payForm" novalidate>';
+  h += '<label for="pf-plan">Plan</label><select id="pf-plan" name="plan">' + paid.map(function(p){ return '<option value="' + p.id + '"' + (SS.plan === p.id ? ' selected' : '') + '>' + esc(p.name) + ' (' + esc(fmtPrice(p)) + ')</option>'; }).join('') + '</select>';
+  h += '<div class="fr"><div><label for="pf-name">Name of payer *</label><input id="pf-name" name="name"></div><div><label for="pf-contact">Phone or email *</label><input id="pf-contact" name="contact"></div></div>';
+  h += '<div class="fr"><div><label for="pf-code">Your code *</label><input id="pf-code" name="code" placeholder="WRA-0001, EMP-0001, TRN-0001 or ORG-0001" style="text-transform:uppercase"></div><div><label for="pf-method">Payment method</label><select id="pf-method" name="method">' + PAY_METHODS.map(function(m){ return '<option>' + esc(m) + '</option>'; }).join('') + '</select></div></div>';
+  h += '<label for="pf-ref">Transaction reference *</label><input id="pf-ref" name="ref" placeholder="The reference number from your receipt or SMS"><label for="pf-note">Note</label><input id="pf-note" name="note" placeholder="Optional">';
+  h += '<p class="note">Need a code? <a href="#apply">Apply free first</a>. This form records your payment for manual verification. Nothing is charged by this page.</p><button class="btn" type="submit">Submit payment reference</button></form></div>';
+  h += '<h2>Questions</h2><details><summary>Is there a limit on applicants?</summary><div class="db"><p>No. Anyone can apply and start the free demo. Paid access is by plan.</p></div></details><details><summary>What does the free demo include?</summary><div class="db"><p>Week 1 of the programme, Lesson 1 of every Academy course, the skill gap check, the prompt builder and the free course library.</p></div></details><details><summary>Can I pay after I get a job?</summary><div class="db"><p>Pay-after-placement and scholarship requests are considered. Apply, choose that option and contact the programme team.</p></div></details>';
+  return h;
+}
+
+/* ---------- Learner dashboard helpers ---------- */
+function learnerPlanHTML(l){
+  if(l.access) return '<div class="card" style="border-color:var(--ok);margin-top:14px"><b style="color:var(--ok)">Full access is active.</b> <span class="note">All programme weeks and Academy courses are open.</span></div>';
+  var pend = state.payments.filter(function(p){ return p.code === l.code && p.status === 'pending'; }).length;
+  return '<div class="card" style="border-color:var(--gold);margin-top:14px"><div class="row between"><div style="min-width:0;flex:1"><b>You are on the free demo.</b><p class="note" style="margin:2px 0 0">' + (pend ? 'Your payment is waiting for verification.' : 'Week 1 and Lesson 1 of every Academy course are open. Unlock the rest with a plan.') + '</p></div><a class="btn sm" href="#pricing">' + (pend ? 'View plans' : 'Unlock full access') + '</a></div></div>';
+}
+function learnerAcademyHTML(l){
+  var h = '<h2>Academy progress</h2><div class="card">';
+  var rows = ACAD.filter(function(c){ return apDone(c.id, l.code) > 0; });
+  if(!rows.length) h += '<p class="note">No Academy lessons completed yet.</p>';
+  rows.forEach(function(c){ var d = apDone(c.id, l.code), pct = Math.round(d / c.lessons.length * 100); h += '<div style="margin-bottom:10px"><div class="row between"><b>' + esc(c.title) + '</b><span class="note">' + d + ' of ' + c.lessons.length + '</span></div><div class="bar"><i style="width:' + pct + '%"></i></div></div>'; });
+  return h + '<a class="btn sm" href="#academy">Open the Academy</a></div>';
+}
+function learnerPaymentsHTML(l){
+  var list = state.payments.filter(function(p){ return p.code === l.code; });
+  var h = '<h2>Payments</h2><div class="card">';
+  if(!list.length) return h + '<p class="note">No payments recorded. <a href="#pricing">See plans</a>.</p></div>';
+  h += '<div class="scroll"><table><tr><th>Date</th><th>Plan</th><th class="n">Amount</th><th>Reference</th><th>Status</th></tr>';
+  list.slice().reverse().forEach(function(p){ h += '<tr><td>' + esc(p.created) + '</td><td>' + esc(p.planName) + '</td><td class="n">' + num(p.amount) + ' ' + esc(p.currency) + '</td><td>' + esc(p.ref) + '</td><td><span class="pill ' + (p.status === 'verified' ? 'ok' : p.status === 'rejected' ? 'red' : 'gold') + '">' + esc(p.status) + '</span></td></tr>'; });
+  return h + '</table></div></div>';
+}
+function hiringPartnersHTML(){
+  var list = state.partners.filter(function(p){ return p.type === 'employer' && p.status === 'approved'; });
+  if(!list.length) return '';
+  return '<h2>Hiring partners</h2><div class="grid">' + list.map(function(p){ return '<div class="card"><h3>' + esc(p.org || p.name) + '</h3><p>' + esc((p.details && p.details.roles) || '') + '</p><p class="note">' + esc(p.city || '') + '</p></div>'; }).join('') + '</div>';
+}
+
+
+/* ================= JOBS AND PLATFORM DIRECTORY ================= */
+var JB = {cat:'', q:''};
+function catLabel(id){ for(var i=0;i<JOB_CATS.length;i++) if(JOB_CATS[i][0] === id) return JOB_CATS[i][1]; return id; }
+function jobsListHTML(){
+  var q = JB.q.trim().toLowerCase(), cp = getCP();
+  var list = JOB_SITES.filter(function(j){
+    if(JB.cat && j.cat !== JB.cat) return false;
+    if(q && (j.name + ' ' + j.desc + ' ' + j.tags.join(' ')).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  if(!list.length) return '<div class="card"><p>No job sites match. Clear the search or choose another group.</p></div>';
+  return '<p class="note" aria-live="polite">' + list.length + ' of ' + JOB_SITES.length + ' job sites</p><div class="grid">' + list.map(function(j){
+    var saved = cp['j:' + j.id] === 'saved';
+    return '<article class="course"><div class="tags"><span class="pill ok">' + esc(catLabel(j.cat)) + '</span>' + j.tags.map(function(t){ return '<span class="pill">' + esc(t) + '</span>'; }).join('') + '</div><h3>' + esc(j.name) + '</h3><p class="prov">' + esc(j.desc) + '</p><div class="acts"><a class="btn sm" href="' + esc(j.url) + '" target="_blank" rel="noopener noreferrer">Open site ↗</a><button class="btn sm ghost' + (saved ? ' on' : '') + '" data-act="jsave" data-j="' + j.id + '" aria-pressed="' + saved + '">' + (saved ? 'Saved' : 'Save') + '</button></div></article>';
+  }).join('') + '</div>';
+}
+function viewJobs(){
+  var h = '<h1>Jobs</h1><p style="max-width:64ch">One place to start for work in Ethiopia and for remote work. Roles from our own employer partners are listed first, followed by ' + JOB_SITES.length + ' job sites for Ethiopia, NGOs and the UN, remote work and freelancing. Each link opens the site itself, where the live vacancies are.</p>';
+  var open = state.demand.filter(function(d){ return d.status === 'Open'; });
+  h += '<h2 style="margin-top:20px">Roles on this platform</h2>';
+  if(!open.length) h += '<div class="card"><p>No open roles right now. Employers can <a href="#apply">apply to list roles</a>.</p></div>';
+  else {
+    h += '<div class="grid">' + open.map(function(d){
+      var tr = trackById(d.track);
+      return '<div class="job" style="margin:0"><div class="row between"><span class="pill ok">' + esc(d.type) + '</span>' + (d.committed ? '<span class="pill gold">Interview guaranteed for graduates</span>' : '') + '</div><h3 style="margin-top:8px">' + esc(d.role) + '</h3><p class="note" style="margin:0">' + esc(d.employer) + ' · ' + esc(d.location) + '</p><p class="note" style="margin:6px 0 0">' + esc(d.wage) + (tr ? ' · ' + esc(tr.name) : '') + '</p></div>';
+    }).join('') + '</div><p class="note" style="margin-top:8px">Graduates apply through the programme team. See <a href="#employers">employer demand</a>.</p>';
+  }
+  h += '<h2>Job sites</h2><div class="card"><div class="filters"><div><label for="jq">Search</label><input id="jq" type="search" placeholder="remote, NGO, freelance, UN" value="' + esc(JB.q) + '"></div></div><div class="row">';
+  JOB_CATS.forEach(function(c){ h += '<button class="chip' + (JB.cat === c[0] ? ' on' : '') + '" style="cursor:pointer" data-act="jcat" data-c="' + c[0] + '">' + esc(c[1]) + '</button>'; });
+  h += '</div></div><div id="jlist">' + jobsListHTML() + '</div>';
+  h += '<p class="note" style="margin-top:8px">Also check the careers pages of large employers directly, such as banks, telecom companies, universities, hospitals and NGOs that work in your area. No list can cover every vacancy.</p>';
+
+  h += '<h2>Remote work: get ready</h2><div class="card"><ol class="steps"><li><b>Set up how you get paid.</b> Week 2 of the programme covers Telebirr, CBE Birr, Payoneer and Wise. Check each service\'s current rules for Ethiopia.</li><li><b>Read each listing for country limits.</b> Many remote jobs hire only in certain countries or time zones. Look for roles that say worldwide or Africa.</li><li><b>Build proof of work.</b> Your Skills Passport and portfolio matter more than a long CV. <a href="#learner">Open your passport</a>.</li><li><b>Practise.</b> Use Interview Warmup and the remote-work guide in the <a href="#courses">free library</a>, and the English lessons for written communication.</li></ol></div>';
+  h += '<h2>Protect yourself from job scams</h2><div class="card"><ul class="lb"><li><b>Never pay to get a job.</b> Real employers do not charge application, training or equipment fees.</li><li>Be careful with offers that arrive unasked, pay far above normal, or ask you to move to a private chat straight away.</li><li>Check the employer has a real website and that the job also appears there.</li><li>For work abroad through an agent, confirm with the Ministry of Labor and Skills that the agency is licensed before you pay or sign anything.</li><li>Never share your passwords, bank PIN or one-time codes. Employers do not need them.</li></ul></div>';
+  return h;
+}
+function platformsHTML(){
+  var h = '<h2 style="margin-top:8px">Learning platforms for every sector</h2><p style="max-width:64ch">No list can hold every course in the world. These platforms cover almost every field, and most have free options. Start with Class Central to search across providers. Terms for free access and certificates change, so read each course page.</p><div class="grid">';
+  LEARN_PLATFORMS.forEach(function(p){
+    h += '<article class="course"><div class="tags">' + p.tags.map(function(t){ return '<span class="pill">' + esc(t) + '</span>'; }).join('') + '</div><h3>' + esc(p.name) + '</h3><p class="prov">' + esc(p.desc) + '</p><div class="acts"><a class="btn sm" href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">Open ↗</a></div></article>';
+  });
+  return h + '</div>';
+}
+
+
+/* ================= ROUTER ================= */
+var ROUTES = ['home','academy','courses','studio','skills','market','employers','jobs','pricing','apply','learner','admin'];
+var NAV = [['home','Home'],['academy','Academy'],['courses','Free library'],['studio','Insight Studio'],['skills','Skill check'],['market','Market'],['employers','Employers'],['jobs','Jobs'],['pricing','Pricing'],['apply','Apply'],['learner','Learner'],['admin','Admin']];
+function route(){
+  var h = (location.hash || '').replace(/^#\/?/, '');
+  return ROUTES.indexOf(h) > -1 ? h : 'home';
+}
+var VIEWS = {jobs:viewJobs, home:viewHome, academy:viewAcademy, studio:viewStudio, pricing:viewPricing, courses:viewCourses, skills:viewSkills, market:viewMarket, employers:viewEmployers, apply:viewApply, learner:viewLearner, admin:viewAdmin};
+function render(){
+  var r = route();
+  $('app').innerHTML = VIEWS[r]();
+  drawNav(r);
+  window.scrollTo(0,0);
+}
+function rerender(keep){
+  var y = window.scrollY;
+  $('app').innerHTML = VIEWS[route()]();
+  if(keep) window.scrollTo(0, y); else window.scrollTo(0,0);
+}
+function drawNav(r){
+  $('nav').innerHTML = NAV.map(function(n){ return '<a href="#' + n[0] + '"' + (r === n[0] ? ' class="on" aria-current="page"' : '') + '>' + n[1] + '</a>'; }).join('');
+}
+
+/* ================= HOME ================= */
+function viewHome(){
+  var tl = state.learners.length, earning = 0, placed = 0, earned = 0;
+  state.learners.forEach(function(l){ var i = income(l); if(i > 0) earning++; if(l.placed) placed++; earned += i; });
+  var rate = tl ? Math.round(placed / tl * 100) : 0;
+  var provs = {}; COURSES.forEach(function(c){ provs[c.prov.split(' (')[0]] = 1; });
+  var provList = Object.keys(provs);
+  var h = '<div class="hero"><span class="pill gold">' + esc(state.cohort.name) + ' · starts ' + esc(state.cohort.start) + ' · open to all applicants</span>';
+  h += '<h1 style="margin:14px 0 10px">Earn while you learn.<br>In your language.</h1>';
+  h += '<p>A 12-week programme with soft skills, AI tools, a paid apprenticeship and 6 months of support after placement. Built for a phone and a small data bundle, with ' + ACAD.length + ' original Academy courses for leaders, schools and NGOs and a library of ' + COURSES.length + ' free global courses. Start with a free demo. Anyone can apply.</p>';
+  h += '<div class="row"><a class="btn" href="#apply">Start free demo</a><a class="btn ghost" href="#academy">Academy courses</a><a class="btn ghost" href="#studio">Insight Studio</a><a class="btn ghost" href="#jobs">Find jobs</a><a class="btn ghost" href="#pricing">Plans</a></div></div>';
+
+  h += '<h2>Who it is for</h2><div class="grid">';
+  [['Learners and job seekers','The 12-week programme, paid apprenticeship work and a Skills Passport.','#apply'],['Executives and senior leaders','AI for decisions, governance, and research-based prompting in the Insight Studio.','#academy'],['Schools and school leaders','Leading a school in the AI era and AI in the classroom.','#academy'],['NGOs and education experts','Monitoring and evaluation, grant writing, and using research in policy.','#academy'],['Job seekers','Ethiopian and remote job sites, scam warnings and remote-work preparation in one place.','#jobs'],['Employers','List roles and meet graduates with verified Skills Passports.','#apply'],['Trainers','Apply for a listing and learn how to design, price and deliver paid courses.','#apply']].forEach(function(a){ h += '<div class="card"><h3>' + esc(a[0]) + '</h3><p>' + esc(a[1]) + '</p><a class="btn sm ghost" href="' + a[2] + '">Open</a></div>'; });
+  h += '</div>';
+  h += '<h2>How it works</h2><div class="card"><ol class="steps">';
+  h += '<li><b>Learn free.</b> Start the library on day one. Every week of the programme links to the free courses that fit it.</li>';
+  h += '<li><b>Earn while you learn.</b> Weeks 2 and 8-11 include paid micro-tasks and client projects.</li>';
+  h += '<li><b>Get placed.</b> Your Skills Passport shows verified skills, income and client ratings to committed employers.</li></ol></div>';
+
+  h += '<h2>Outcomes</h2><div class="grid s"><div class="stat"><b>' + tl + '</b><span>Learners enrolled</span></div><div class="stat"><b>' + rate + '%</b><span>Placement rate</span></div><div class="stat"><b>' + money(earned) + '</b><span>Total earned by learners</span></div><div class="stat"><b>' + earning + '</b><span>Learners earning</span></div></div>';
+  h += '<p class="note" style="margin-top:8px">Target: 70%+ placed within 6 months. Global programmes report 70-85%.</p>';
+
+  h += '<h2>Free learning from ' + provList.length + ' providers</h2><div class="card"><p>' + provList.map(esc).join(' · ') + '</p><a class="btn sm" href="#courses">Open the library</a></div>';
+
+  h += '<h2>Specialization tracks</h2><div class="grid">';
+  TRACKS.forEach(function(t){
+    var gap = t.demand - t.supply;
+    h += '<div class="card"><div class="row between"><h3>' + esc(t.name) + '</h3><span class="pill ' + (gap > 60 ? 'ok' : 'gold') + '">Gap ' + gap + '</span></div><p>' + esc(t.desc) + '</p><span class="pill">' + esc(t.wage) + '</span> <span class="pill">Demand ' + t.demand + '</span> <span class="pill">Supply ' + t.supply + '</span></div>';
+  });
+  h += '</div>';
+
+  h += '<h2>12-week curriculum</h2>';
+  PHASES.forEach(function(ph){
+    h += '<h3 style="margin:16px 0 8px;color:var(--accent)">Phase ' + ph.id + ': ' + esc(ph.name) + '</h3>';
+    CURR.filter(function(w){ return w.p === ph.id; }).forEach(function(w){
+      var cs = COURSES.filter(function(c){ return c.wk.indexOf(w.w) > -1; }).length;
+      h += '<details><summary>Week ' + w.w + ': ' + esc(w.name) + ' <span class="pill">' + w.tasks.length + ' tasks</span> <span class="pill ok">' + cs + ' free resources</span></summary><div class="db">';
+      w.tasks.forEach(function(t){ h += '<div class="task">• ' + esc(t) + '</div>'; });
+      h += '</div></details>';
+    });
+  });
+
+  h += '<h2>What we learned from global programmes</h2>';
+  BEST_PRACTICES.forEach(function(b){ h += '<div class="lesson"><div class="from">' + esc(b.from) + '</div><h4>' + esc(b.title) + '</h4><p>' + esc(b.lesson) + '</p></div>'; });
+
+  h += '<h2>How we compare</h2><div class="card scroll"><table><tr><th>Metric</th><th>WorkReady AI target</th><th>Global benchmark</th></tr>';
+  h += '<tr><td>Placement within 6 months</td><td>70%</td><td>70-85% (Generation, Per Scholas)</td></tr>';
+  h += '<tr><td>Average income gain</td><td>2-3x prior</td><td>2-3x (Generation)</td></tr>';
+  h += '<tr><td>Completion rate</td><td>75%</td><td>70-80% (Year Up, ALX)</td></tr>';
+  h += '<tr><td>Cost per placement</td><td>$150-300</td><td>$500-1500</td></tr>';
+  h += '<tr><td>Post-placement support</td><td>6 months</td><td>6-12 months (Generation)</td></tr></table></div>';
+  h += '<p class="note">Targets are goals for this programme. Benchmarks are the figures in the original plan; check them against current reports before publishing.</p>';
+  return h;
+}
+
+/* ================= APPLY ================= */
+function viewApply(){
+  var h = '<h1>Apply</h1><p style="max-width:64ch">Anyone can apply, and there is no limit on the number of applicants. Learners, employers, trainers and organizations all apply here. You start on the free demo and pay to unlock full access. Scholarship and pay-after-placement requests are considered.</p>';
+  h += '<div class="card" style="max-width:760px"><form id="applyForm" novalidate>';
+  h += '<label for="a-type">I am applying as *</label><select id="a-type" name="atype"><option value="learner">A learner</option><option value="employer">An employer</option><option value="trainer">A trainer</option><option value="org">An organization (NGO, school, company)</option></select>';
+  h += '<div class="fr"><div><label for="a-name">Full name (contact person) *</label><input id="a-name" name="name" autocomplete="name"></div><div><label for="a-phone">Phone *</label><input id="a-phone" name="phone" inputmode="tel" placeholder="09xx xxx xxx"></div></div>';
+  h += '<div class="fr"><div><label for="a-email">Email</label><input id="a-email" name="email" type="email"></div><div><label for="a-city">City *</label><input id="a-city" name="city" placeholder="Addis Ababa"></div></div>';
+  h += '<div id="sec-partner" hidden><label for="a-org">Organization or business name *</label><input id="a-org" name="org"></div>';
+  h += '<div id="sec-learner">';
+  h += '<div class="fr"><div><label for="a-age">Age *</label><input id="a-age" name="age" type="number" min="14" max="80"></div><div><label for="a-gender">Gender</label><select id="a-gender" name="gender"><option>Female</option><option>Male</option><option>Prefer not to say</option></select></div></div>';
+  h += '<div class="fr"><div><label for="a-edu">Education</label><select id="a-edu" name="education"><option>Grade 12</option><option>TVET certificate</option><option>Diploma</option><option>Bachelor degree</option><option>Other</option></select></div><div><label for="a-eng">English level</label><select id="a-eng" name="english"><option>Basic</option><option>Intermediate</option><option>Good</option><option>Fluent</option></select></div></div>';
+  h += '<div class="fr"><div><label for="a-lap">Laptop?</label><select id="a-lap" name="laptop"><option>No</option><option>Yes, shared</option><option>Yes, my own</option></select></div><div><label for="a-net">Internet</label><select id="a-net" name="internet"><option>Mobile data only</option><option>Home Wi-Fi</option><option>Limited or none</option></select></div></div>';
+  h += '<label for="a-track">Preferred track *</label><select id="a-track" name="track"><option value="">Select a track</option>' + TRACKS.map(function(t){ return '<option value="' + t.id + '">' + esc(t.name) + ' (' + esc(t.wage) + ')</option>'; }).join('') + '</select>';
+  h += '<div class="fr"><div><label for="a-pay">How will you pay?</label><select id="a-pay" name="payment"><option>I will pay for a plan</option><option>I need a scholarship</option><option>Pay after placement</option></select></div><div><label for="a-care">Need childcare support?</label><select id="a-care" name="childcare"><option>No</option><option>Yes</option></select></div></div>';
+  h += '<label for="a-why">Why do you want to join? *</label><textarea id="a-why" name="why" placeholder="3-4 sentences. Amharic or English is fine."></textarea>';
+  h += '<label for="a-com">Can you attend 3 hours a day, 5 days a week for 12 weeks? *</label><select id="a-com" name="commitment"><option value="">Select</option><option>Yes, fully</option><option>Mostly</option><option>No</option></select></div>';
+  h += '<div id="sec-employer" hidden><label for="a-roles">Roles you want to fill *</label><textarea id="a-roles" name="roles" placeholder="Role, number of people, location, pay range"></textarea></div>';
+  h += '<div id="sec-trainer" hidden><label for="a-topics">Topics you teach *</label><input id="a-topics" name="topics"><label for="a-exp">Your experience</label><textarea id="a-exp" name="exp"></textarea><label for="a-link">Link to a sample of your teaching</label><input id="a-link" name="link" placeholder="https://"></div>';
+  h += '<div id="sec-org" hidden><div class="fr"><div><label for="a-otype">Organization type</label><select id="a-otype" name="otype"><option>NGO</option><option>School</option><option>University or TVET</option><option>Company</option><option>Government office</option></select></div><div><label for="a-staff">Staff to train</label><input id="a-staff" name="staff" type="number" min="1"></div></div><label for="a-needs">What do you need? *</label><textarea id="a-needs" name="needs" placeholder="Skills, courses, number of people, timeline"></textarea></div>';
+  h += '<label for="a-src">How did you hear about us?</label><select id="a-src" name="source"><option value="">Select</option>' + CHANNELS.map(function(c){ return '<option>' + esc(c) + '</option>'; }).join('') + '</select>';
+  h += '<button class="btn" type="submit">Apply and start the free demo</button></form></div><div id="applyResult"></div>';
+  return h;
+}
+function toggleApply(type){
+  var show = {learner:['sec-learner'], employer:['sec-partner','sec-employer'], trainer:['sec-partner','sec-trainer'], org:['sec-partner','sec-org']}[type] || ['sec-learner'];
+  ['sec-learner','sec-partner','sec-employer','sec-trainer','sec-org'].forEach(function(id){ var el = $(id); if(el) el.hidden = show.indexOf(id) < 0; });
+}
+function nextLearnerCode(){
+  var n = state.learners.length + 1, code;
+  do{ code = 'WRA-' + String(n).padStart(4, '0'); n++; }while(findLearner(code));
+  return code;
+}
+function nextPartnerCode(type){
+  var pre = {employer:'EMP', trainer:'TRN', org:'ORG'}[type], n = state.partners.filter(function(p){ return p.type === type; }).length + 1, code;
+  do{ code = pre + '-' + String(n).padStart(4, '0'); n++; }while(findPartner(code));
+  return code;
+}
+function newLearner(name, extra){
+  var l = {id:uid(), code:nextLearnerCode(), name:name, phone:'', email:'', city:'', education:'', english:'', track:'', done:{}, income:[], ratingList:[], placed:false, joined:today(), access:false};
+  for(var k in extra) l[k] = extra[k];
+  state.learners.push(l);
+  return l;
+}
+
+/* ================= MARKET ================= */
+function viewMarket(){
+  var ranked = TRACKS.slice().sort(function(a,b){ return (b.demand - b.supply) - (a.demand - a.supply); });
+  var h = '<h1>Market intelligence</h1><p>Which skills have the highest demand and lowest supply in Ethiopia, and what the global research says.</p>';
+  h += '<div class="card"><h3>Key insights for Ethiopia</h3><ul style="padding-left:20px;margin:8px 0 0">' + INSIGHTS.map(function(i){ return '<li style="margin-bottom:5px">' + esc(i) + '</li>'; }).join('') + '</ul></div>';
+  h += '<h2>Opportunity ranking (gap = demand minus supply)</h2><div class="card scroll"><table><tr><th>Track</th><th class="n">Demand</th><th class="n">Supply</th><th class="n">Gap</th><th>Wage</th></tr>';
+  ranked.forEach(function(t){
+    var gap = t.demand - t.supply;
+    h += '<tr><td><b>' + esc(t.name) + '</b></td><td class="n">' + t.demand + '</td><td class="n">' + t.supply + '</td><td class="n"><span class="pill ' + (gap > 60 ? 'ok' : 'gold') + '">' + gap + '</span></td><td>' + esc(t.wage) + '</td></tr>';
+  });
+  h += '</table></div><p class="note">Demand and supply scores are planning estimates for this programme, not survey results.</p>';
+  h += '<h2>Global skills research</h2><div class="grid s">';
+  h += '<div class="stat"><b>59%</b><span>of workers need reskilling by 2030 (WEF Future of Jobs 2025)</span></div>';
+  h += '<div class="stat"><b>39%</b><span>of core skills expected to change by 2030 (WEF)</span></div>';
+  h += '<div class="stat"><b>74%</b><span>of employers struggle to find skilled talent (ManpowerGroup 2025)</span></div>';
+  h += '<div class="stat"><b>~1%</b><span>of workers have advanced AI skills (OECD)</span></div></div>';
+  h += '<p class="note" style="margin-top:8px">Figures are taken from the research brief supplied with this project. Verify them against the original reports before publishing.</p>';
+  h += '<div class="card scroll" style="margin-top:12px"><table><tr><th>Global skill gap</th><th>Programme response</th></tr>';
+  GLOBAL_GAPS.forEach(function(g){ h += '<tr><td><b>' + esc(g[0]) + '</b></td><td>' + esc(g[1]) + '</td></tr>'; });
+  h += '</table><div style="margin-top:12px"><a class="btn sm" href="#skills">Check your own gaps</a></div></div>';
+  h += '<h2>Sources to consult</h2><div class="card"><p class="note">CSA Labour Force Survey · ILO Ethiopia · World Bank Skills & Jobs · Mastercard Foundation Young Africa Works · ITU/GSMA · Ministry of Labor and Skills · World Economic Forum Future of Jobs Report 2025 · ManpowerGroup Talent Shortage survey · OECD · Coursera Global Skills Report</p></div>';
+  return h;
+}
+
+/* ================= EMPLOYERS ================= */
+function viewEmployers(){
+  var open = 0, seats = 0, committed = 0;
+  state.demand.forEach(function(d){ if(d.status === 'Open') open++; seats += Number(d.seats||0); if(d.committed) committed++; });
+  var h = '<h1>Employer demand</h1><p>Live demand from employers, BPOs, NGOs and global clients. Committed employers guarantee interviews to graduates.</p>';
+  h += '<div class="row" style="margin-bottom:14px"><span class="pill ok">' + open + ' open roles</span><span class="pill">' + seats + ' seats</span><span class="pill gold">' + committed + ' committed to interview</span></div>';
+  if(!state.demand.length) h += '<div class="card"><p>No open roles yet.</p></div>';
+  state.demand.forEach(function(d){
+    var tr = trackById(d.track);
+    h += '<div class="job"><div class="row between"><span class="pill ' + (d.status === 'Open' ? 'ok' : '') + '">' + esc(d.status) + '</span>' + (d.committed ? '<span class="pill gold">Committed to interview</span>' : '') + '<span class="pill">' + esc(d.type) + '</span></div>';
+    h += '<h3 style="margin-top:8px">' + esc(d.role) + '</h3><p class="note" style="margin:0">' + esc(d.employer) + ' · ' + esc(d.location) + '</p>';
+    h += '<p class="note" style="margin:6px 0 0">' + esc(d.wage) + ' · ' + esc(d.seats) + ' seats' + (tr ? ' · ' + esc(tr.name) : '') + '</p><div style="margin-top:6px">' + (d.skills||[]).map(function(s){ return '<span class="badge">' + esc(s) + '</span>'; }).join('') + '</div></div>';
+  });
+  h += '<div class="card"><h3>Hire our graduates</h3><p>Learners complete a paid apprenticeship before placement. Skills are pre-vetted, portfolios verified, work client-rated, and 6 months of post-placement support is included.</p><ul style="padding-left:20px;margin:0"><li>Monthly hiring events: meet 5+ graduates in one day</li><li>Pre-screened candidates matched to your skill needs</li><li>6-month replacement guarantee</li><li>Wage subsidy available for the first 3 months</li></ul></div>';
+
+  h += hiringPartnersHTML() + '<div class="row"><a class="btn sm" href="#apply">Apply as an employer</a><a class="btn sm ghost" href="#pricing">Plans</a></div>';
+  h += '<h2>SkillBridge for employers</h2><div class="card"><p>The same engine that guides learners also helps organizations find where their teams fall short and train them with free resources first. Use the team mode in the <a href="#skills">skill gap check</a> to assess your staff in under two minutes.</p>';
+  h += '<div class="grid"><div><h3>What it does</h3><ul style="padding-left:20px;margin:6px 0 0"><li>Assess skills and benchmark them</li><li>Find gaps and recommend learning paths</li><li>Track progress and match people to roles</li><li>Report skill heatmaps and training ROI</li></ul></div>';
+  h += '<div><h3>Who it serves</h3><ul style="padding-left:20px;margin:6px 0 0"><li>Enterprises: reskilling at scale</li><li>Governments: national reskilling programmes</li><li>Universities: employability</li><li>SMEs: affordable workforce development</li></ul></div></div>';
+  h += '<h3 style="margin-top:16px">Planned subscription pricing</h3><div class="scroll"><table><tr><th>Client</th><th class="n">Monthly fee (USD)</th></tr><tr><td>Small business</td><td class="n">$200-$500</td></tr><tr><td>Medium business</td><td class="n">$1,000-$5,000</td></tr><tr><td>Enterprise</td><td class="n">$10,000+</td></tr></table></div>';
+  h += '<p class="note" style="margin-top:8px">Pricing is the proposal from the research brief and has not been tested with customers. Extra revenue ideas: certification programmes, consulting, workforce analytics and talent marketplace fees.</p></div>';
+  return h;
+}
+
+/* ================= LEARNER ================= */
+function weekResources(w, track){
+  var list = COURSES.filter(function(c){ return c.wk.indexOf(w) > -1 && relevantTrack(c, track); });
+  return list.slice(0,5);
+}
+function viewLearner(){
+  var s = getSess();
+  if(!s || s.role !== 'learner'){
+    return '<h1>Learner login</h1><p>Enter the learner code you received after applying.</p><div class="card" style="max-width:400px"><label for="learnerCode">Learner code</label><input id="learnerCode" placeholder="WRA-0001" style="text-transform:uppercase" autocomplete="off"><button class="btn" data-act="llogin">Sign in</button><p class="note" style="margin-top:12px">No code yet? <a href="#apply">Apply here</a>.</p></div>';
+  }
+  var l = findLearner(s.code);
+  if(!l){ setSess(null); return '<div class="card">Session expired. <a href="#learner">Sign in again</a>.</div>'; }
+  l.income = l.income || []; l.ratingList = l.ratingList || [];
+  var p = prog(l), phase = phaseOf(l), tr = trackById(l.track), inc = income(l), hrs = hours(l), rt = rating(l), mentor = mentorFor(l);
+  var initial = l.name.split(' ').slice(0,2).map(function(x){ return x.charAt(0); }).join('').toUpperCase();
+  var cp = getCP(l.code);
+  var h = '<div class="row between"><div><h1 style="margin-bottom:4px">Hi, ' + esc(l.name.split(' ')[0]) + '</h1><p class="note" style="margin:0">Code <b>' + esc(l.code) + '</b> · joined ' + esc(l.joined) + ' · ' + esc(tr ? tr.name : 'No track') + '</p></div><button class="btn sm ghost" data-act="logout">Sign out</button></div>';
+
+  h += learnerPlanHTML(l);
+  h += '<h2>Skills Passport</h2><div class="passport"><div class="row" style="gap:14px;flex-wrap:nowrap"><div class="avatar">' + esc(initial) + '</div><div style="min-width:0"><h2 style="margin:0 0 3px">' + esc(l.name) + '</h2><p class="note" style="margin:0">' + esc(l.city||'') + ' · ' + esc(l.education||'') + ' · English: ' + esc(l.english||'') + '</p>' + (tr ? '<p style="margin:4px 0 0;color:var(--fg)">' + esc(tr.name) + '</p>' : '') + '</div></div>';
+  h += '<div class="grid s" style="margin-top:14px"><div class="stat"><b>' + p + '%</b><span>Completion</span></div><div class="stat"><b>' + money(inc) + '</b><span>Total earned</span></div><div class="stat"><b>' + hrs + 'h</b><span>Hours worked</span></div><div class="stat"><b>' + (rt ? rt.toFixed(1) : '-') + '</b><span>Client rating</span></div><div class="stat"><b>' + cpCount(cp,'done') + '</b><span>Free courses done</span></div></div>';
+  var vs = verifiedSkills(l), ss = studySkills(l);
+  h += '<div style="margin-top:14px"><div class="note" style="margin-bottom:4px">Programme skills</div>' + (vs.length ? vs.map(function(x){ return '<span class="badge">✓ ' + esc(x) + '</span>'; }).join('') : '<span class="note">Reach 20% completion to unlock your first verified skill.</span>') + '</div>';
+  h += '<div style="margin-top:10px"><div class="note" style="margin-bottom:4px">Self-study (2+ courses completed in an area)</div>' + (ss.length ? ss.map(function(x){ return '<span class="badge gold">✓ ' + esc(x) + '</span>'; }).join('') : '<span class="note">Finish two free courses in the same skill area to add it here.</span>') + '</div>';
+  var acd = acadDone(l.code); if(acd.length) h += '<div style="margin-top:10px"><div class="note" style="margin-bottom:4px">WorkReady Academy courses completed</div>' + acd.map(function(c){ return '<span class="badge gold">✓ ' + esc(c.title) + '</span>'; }).join('') + '</div>';
+  var doneList = Object.keys(cp).filter(function(k){ return cp[k] === 'done' && COURSE_BY[k]; });
+  if(doneList.length) h += '<div style="margin-top:10px"><div class="note" style="margin-bottom:4px">Completed courses (self-reported)</div><p style="margin:0;font-size:13.5px;color:var(--fg)">' + doneList.map(function(k){ return esc(COURSE_BY[k].title) + ' (' + esc(COURSE_BY[k].prov) + ')'; }).join(' · ') + '</p></div>';
+  h += '<div style="margin-top:12px"><span class="note">Verification code</span> <b style="font-family:var(--f-mono)">' + esc(l.code) + '</b> <span class="note">· share with employers</span></div>';
+  h += '<div class="row" style="margin-top:12px"><button class="btn sm ghost" data-act="pcopy">Copy passport summary</button></div></div>';
+
+  h += '<h2>Your free learning path</h2>';
+  h += pathHTML('foundation') + (PATHS[l.track] ? pathHTML(l.track) : '');
+  h += '<div class="row"><a class="btn sm" href="#courses">Browse the full library</a><a class="btn sm ghost" href="#skills">Check my skill gaps</a></div>';
+
+  h += learnerAcademyHTML(l);
+  h += '<h2>Your support</h2><div class="grid">';
+  if(mentor) h += '<div class="card"><span class="pill gold">Mentor</span><h3 style="margin-top:10px">' + esc(mentor.name) + '</h3><p>' + esc(mentor.bio) + '</p><p class="note">Weekly 1-on-1</p></div>';
+  h += '<div class="card"><span class="pill">Cohort</span><h3 style="margin-top:10px">' + esc(state.cohort.name) + '</h3><p>Starts ' + esc(state.cohort.start) + ' · open enrolment</p><p class="note">Peer study groups and a Telegram cohort channel</p></div></div>';
+
+  h += '<h2>Progress</h2><div class="card"><div class="row between"><b>Programme progress</b><b style="color:var(--accent)" id="progpct">' + p + '%</b></div><div class="bar" style="margin:9px 0 5px"><i id="progbar" style="width:' + p + '%"></i></div><p class="note" style="margin:0" id="progtxt">' + doneTasks(l) + ' of ' + totalTasks() + ' tasks · Phase ' + phase + ' of 4</p><div style="margin-top:10px">' + PHASES.map(function(ph){ return '<span class="chip' + (ph.id === phase ? ' on' : '') + '">Phase ' + ph.id + ': ' + esc(ph.name) + '</span>'; }).join('') + '</div></div>';
+
+  h += '<h2>Your 12 weeks</h2>';
+  CURR.forEach(function(w){
+    var wd = 0; w.tasks.forEach(function(t, i){ if(l.done && l.done[w.w + '-' + i]) wd++; });
+    h += '<details><summary>Week ' + w.w + ': ' + esc(w.name) + (w.p === 3 ? ' <span class="pill red">Paid</span>' : '') + ' <span class="pill ' + (wd === w.tasks.length ? 'ok' : '') + '">' + wd + '/' + w.tasks.length + '</span></summary><div class="db">';
+    w.tasks.forEach(function(t, i){
+      var key = w.w + '-' + i;
+      h += '<label class="task"><input type="checkbox" data-task="' + key + '"' + (l.done && l.done[key] ? ' checked' : '') + (!l.access && w.w > 1 ? ' disabled' : '') + '> ' + esc(t) + '</label>';
+    });
+    if(!l.access && w.w > 1) h += '<p class="note">Weeks 2 to 12 unlock with a plan. <a href="#pricing">See plans</a>.</p>';
+    var res = weekResources(w.w, l.track);
+    if(res.length){
+      h += '<div style="margin-top:10px"><div class="note" style="margin-bottom:4px"><b>Free resources for this week</b></div><ul style="padding-left:20px;margin:0">';
+      res.forEach(function(c){ h += '<li><a href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer">' + esc(c.title) + ' ↗</a> <span class="note">' + (cp[c.id] === 'done' ? '· done' : esc(c.prov)) + '</span></li>'; });
+      h += '</ul></div>';
+    }
+    h += '</div></details>';
+  });
+
+  h += '<h2>Income tracking</h2><div class="card"><div class="grid s" style="margin-bottom:12px"><div class="stat"><b>' + money(inc) + '</b><span>Total earned (paid)</span></div><div class="stat"><b>' + hrs + 'h</b><span>Hours</span></div><div class="stat"><b>' + (hrs ? num(Math.round(inc / hrs)) : 0) + '</b><span>Average ETB per hour</span></div></div>';
+  if(l.income.length){
+    h += '<div class="scroll"><table><tr><th>Source</th><th>Date</th><th class="n">Hrs</th><th>Status</th><th class="n">Amount</th></tr>';
+    l.income.slice().reverse().forEach(function(it){
+      h += '<tr><td><b>' + esc(it.source) + '</b></td><td>' + esc(it.date) + '</td><td class="n">' + esc(it.hours||0) + '</td><td><span class="pill ' + (it.status === 'Paid' ? 'ok' : 'gold') + '">' + esc(it.status) + '</span></td><td class="n"><b>' + num(it.amount) + ' ' + esc(it.currency||'ETB') + '</b></td></tr>';
+    });
+    h += '</table></div><p class="note">USD amounts are converted at ' + state.fx + ' ETB per dollar, set by the programme.</p>';
+  } else h += '<p class="note">No income logged yet. Complete Week 2 to unlock your first paid micro-task.</p>';
+  h += '<details style="margin-top:12px"><summary>Log income</summary><div class="db"><form id="incomeForm">';
+  h += '<div class="fr"><div><label for="i-src">Source *</label><input id="i-src" name="source" placeholder="Global AI Data Co."></div><div><label for="i-date">Date *</label><input id="i-date" name="date" type="date" value="' + today() + '"></div></div>';
+  h += '<div class="fr"><div><label for="i-amt">Amount *</label><input id="i-amt" name="amount" type="number" min="0" placeholder="2500"></div><div><label for="i-cur">Currency</label><select id="i-cur" name="currency"><option>ETB</option><option>USD</option></select></div></div>';
+  h += '<div class="fr"><div><label for="i-hrs">Hours</label><input id="i-hrs" name="hours" type="number" min="0" value="0" step="0.5"></div><div><label for="i-st">Status</label><select id="i-st" name="status"><option>Paid</option><option>Pending</option></select></div></div>';
+  h += '<label for="i-note">Note</label><input id="i-note" name="note" placeholder="Amharic transcription batch 1"><button class="btn" type="submit">Save income</button></form></div></details></div>';
+
+  h += '<h2>Client ratings</h2><div class="card">';
+  if(l.ratingList.length){
+    var stars = ''; for(var i=1;i<=5;i++) stars += (i <= Math.round(rt) ? '★' : '☆');
+    h += '<p style="color:var(--fg)"><span style="color:var(--gold);font-size:17px">' + stars + '</span> <b>' + rt.toFixed(1) + '</b> from ' + l.ratingList.length + ' client(s)</p>';
+  } else h += '<p class="note">No ratings yet. Complete a paid project to get rated.</p>';
+  h += '<details><summary>Add rating</summary><div class="db"><form id="ratingForm"><label for="r-val">Rating</label><select id="r-val" name="rating"><option value="5">5 Excellent</option><option value="4">4 Good</option><option value="3">3 Average</option><option value="2">2 Below average</option><option value="1">1 Poor</option></select><button class="btn" type="submit">Save rating</button></form></div></details></div>';
+
+  h += learnerPaymentsHTML(l);
+  h += '<h2>After placement</h2><div class="card"><p>You get 6 months of support, in line with Year Up and Generation graduates.</p><ul style="padding-left:20px;margin:0"><li>Monthly check-ins with your mentor</li><li>Alumni network and job board</li><li>Free refresher courses if you change jobs</li><li>Help with client disputes</li><li>Upskill stipend after 6 months employed</li></ul></div>';
+  return h;
+}
+function passportText(l){
+  var tr = trackById(l.track), cp = getCP(l.code);
+  var done = Object.keys(cp).filter(function(k){ return cp[k] === 'done' && COURSE_BY[k]; }).map(function(k){ return COURSE_BY[k].title + ' (' + COURSE_BY[k].prov + ')'; });
+  return 'WorkReady AI Skills Passport\n' + l.name + ' · ' + (l.city||'') + '\nCode: ' + l.code + '\nTrack: ' + (tr ? tr.name : '-') + '\nProgramme completion: ' + prog(l) + '%\nTotal earned: ' + money(income(l)) + ' over ' + hours(l) + ' hours\nClient rating: ' + (rating(l) ? rating(l).toFixed(1) + '/5' : 'none yet') + '\nProgramme skills: ' + (verifiedSkills(l).join(', ') || 'none yet') + '\nSelf-study skills: ' + (studySkills(l).join(', ') || 'none yet') + '\nFree courses completed (self-reported): ' + (done.join('; ') || 'none yet') + '\nWorkReady Academy courses completed (not an accredited qualification): ' + (acadDone(l.code).map(function(c){ return c.title; }).join('; ') || 'none yet');
+}
+
+/* ================= ADMIN ================= */
+var ADMIN_TAB = 'applicants', RESET_ASK = false, EXPORT_OPEN = false, MK = {out:null}, TOOL_OUT = '';
+var ADMIN_PASS = 'workready';
+function revenue(){
+  var r = {etb:0, usd:0, pending:0, verified:0, byPlan:{}};
+  state.payments.forEach(function(p){
+    if(p.status === 'pending') r.pending++;
+    if(p.status !== 'verified') return;
+    r.verified++;
+    if(p.currency === 'USD') r.usd += p.amount; else r.etb += p.amount;
+    var k = p.planName + ' (' + p.currency + ')'; r.byPlan[k] = (r.byPlan[k] || 0) + p.amount;
+  });
+  return r;
+}
+function statusPill(s){ return '<span class="pill ' + (s === 'verified' || s === 'approved' ? 'ok' : s === 'rejected' ? 'red' : 'gold') + '">' + esc(s) + '</span>'; }
+function viewAdmin(){
+  var s = getSess();
+  if(!s || s.role !== 'admin'){
+    return '<h1>Admin</h1><p>Back office for applicants, partners, payments, tools and marketing.</p><div class="card" style="max-width:420px"><label for="adminPass">Admin passcode</label><input id="adminPass" type="password" placeholder="Passcode"><button class="btn" data-act="alogin">Sign in</button><p class="note" style="margin-top:12px">Demo passcode: <b>workready</b>. It sits in the page source, so it only protects a demo. All data stays in this browser.</p></div>';
+  }
+  var a = state.applicants, l = state.learners, d = state.demand, rv = revenue();
+  var h = '<div class="row between"><h1>Admin</h1><div class="row"><button class="btn sm ghost" data-act="export">Export JSON</button>';
+  h += RESET_ASK ? '<button class="btn sm danger" data-act="reset-yes">Yes, delete everything</button><button class="btn sm ghost" data-act="reset-no">Cancel</button>' : '<button class="btn sm ghost" data-act="reset-ask">Reset all</button>';
+  h += '<button class="btn sm ghost" data-act="logout">Sign out</button></div></div>';
+  if(EXPORT_OPEN) h += '<div class="card" style="margin-top:12px"><label for="exp">Copy this JSON and save it in a file. Downloads are not available on this page.</label><textarea id="exp" readonly style="min-height:140px;font-family:var(--f-mono);font-size:12px">' + esc(JSON.stringify(state, null, 2)) + '</textarea><button class="btn sm" data-act="copy" data-el="exp">Copy JSON</button></div>';
+  h += '<div class="grid s" style="margin-top:14px"><div class="stat"><b>' + num(rv.etb) + '</b><span>ETB verified</span></div><div class="stat"><b>' + num(rv.usd) + '</b><span>USD verified</span></div><div class="stat"><b>' + rv.pending + '</b><span>Payments to verify</span></div><div class="stat"><b>' + a.length + '</b><span>Learner applicants</span></div><div class="stat"><b>' + state.partners.length + '</b><span>Partner applicants</span></div></div>';
+  var tabs = [['applicants','Applicants',a.length],['learners','Learners',l.length],['partners','Partners',state.partners.length],['payments','Payments',state.payments.length],['tools','AI admin tools',null],['marketing','Marketing',null],['learning','Learning',null],['demand','Demand',d.length],['settings','Settings',null]];
+  h += '<div class="tabs">' + tabs.map(function(t){ return '<button class="btn sm ' + (ADMIN_TAB === t[0] ? '' : 'ghost') + '" data-act="atab" data-t="' + t[0] + '">' + t[1] + (t[2] !== null ? ' (' + t[2] + ')' : '') + '</button>'; }).join('') + '</div>';
+
+  if(ADMIN_TAB === 'applicants'){
+    if(!a.length) h += '<div class="card"><p>No applications yet. Share the <a href="#apply">apply link</a>.</p></div>';
+    else {
+      h += '<div class="card scroll"><table><tr><th>Code</th><th>Name</th><th>City</th><th>Track</th><th>Phone</th><th>Source</th><th>Access</th></tr>';
+      a.slice().reverse().forEach(function(x){ var tr = trackById(x.track), lr = findLearner(x.learnerCode);
+        h += '<tr><td><b>' + esc(x.learnerCode || x.id) + '</b></td><td>' + esc(x.name) + '</td><td>' + esc(x.city) + '</td><td>' + (tr ? esc(tr.name) : '-') + '</td><td>' + esc(x.phone) + '</td><td>' + esc(x.source || '-') + '</td><td>' + (lr && lr.access ? '<span class="pill ok">Full</span>' : '<span class="pill gold">Demo</span>') + '</td></tr>'; });
+      h += '</table></div>';
+    }
+  }
+  if(ADMIN_TAB === 'learners'){
+    if(!l.length) h += '<div class="card"><p>No learners yet.</p></div>';
+    else {
+      h += '<div class="card scroll"><table><tr><th>Code</th><th>Name</th><th>Access</th><th class="n">Progress</th><th class="n">Academy done</th><th class="n">Earned</th><th>Placed</th><th></th></tr>';
+      l.forEach(function(x){
+        h += '<tr><td><b>' + esc(x.code) + '</b></td><td>' + esc(x.name) + '</td><td>' + (x.access ? '<span class="pill ok">Full</span>' : '<span class="pill gold">Demo</span>') + '</td><td class="n">' + prog(x) + '%</td><td class="n">' + acadDone(x.code).length + '</td><td class="n">' + money(income(x)) + '</td><td><input type="checkbox" aria-label="Placed: ' + esc(x.name) + '" data-placed="' + x.id + '"' + (x.placed ? ' checked' : '') + '></td><td>' + (x.access ? '' : '<button class="btn sm ghost" data-act="grant" data-id="' + x.id + '">Grant access</button>') + '</td></tr>'; });
+      h += '</table></div>';
+    }
+  }
+  if(ADMIN_TAB === 'partners'){
+    if(!state.partners.length) h += '<div class="card"><p>No employer, trainer or organization applications yet.</p></div>';
+    state.partners.slice().reverse().forEach(function(p){
+      var det = p.details || {};
+      h += '<div class="card"><div class="row between"><div style="min-width:0"><span class="pill">' + esc({employer:'Employer',trainer:'Trainer',org:'Organization'}[p.type]) + '</span> <b>' + esc(p.org || p.name) + '</b> <span class="note">' + esc(p.code) + '</span></div><div>' + statusPill(p.status) + (p.paid ? ' <span class="pill ok">Paid</span>' : ' <span class="pill gold">Unpaid</span>') + '</div></div>';
+      h += '<p class="note" style="margin:6px 0">' + esc(p.name) + ' · ' + esc(p.phone) + (p.email ? ' · ' + esc(p.email) : '') + ' · ' + esc(p.city) + ' · source: ' + esc(p.source || '-') + '</p>';
+      h += '<p style="margin:0 0 8px">' + esc(det.roles || det.topics || det.needs || '') + '</p>';
+      h += '<div class="row">';
+      if(p.status !== 'approved') h += '<button class="btn sm" data-act="p-approve" data-id="' + p.id + '">Approve</button>';
+      if(p.status !== 'rejected') h += '<button class="btn sm danger" data-act="p-reject" data-id="' + p.id + '">Reject</button>';
+      h += '</div>';
+      if(p.type === 'org' && p.status === 'approved' && p.paid){
+        h += '<div class="row" style="margin-top:10px"><label for="n-' + p.id + '" style="margin:0">Staff codes to create</label><input id="n-' + p.id + '" type="number" min="1" max="500" value="10" style="width:90px;margin:0"><button class="btn sm" data-act="p-codes" data-id="' + p.id + '">Create codes</button></div>';
+        if((p.codes || []).length) h += '<p class="note" style="margin-top:8px">Codes: ' + esc(p.codes.join(', ')) + '</p>';
+      }
+      h += '</div>';
+    });
+  }
+  if(ADMIN_TAB === 'payments'){
+    var vr = Object.keys(rv.byPlan).map(function(k){ return esc(k) + ': <b>' + num(rv.byPlan[k]) + '</b>'; }).join(' · ');
+    h += '<div class="card"><p style="margin:0">' + (vr || 'No verified payments yet.') + '</p></div>';
+    if(!state.payments.length) h += '<div class="card"><p>No payment references submitted yet. They appear here after people use the form on the <a href="#pricing">pricing page</a>.</p></div>';
+    else {
+      h += '<div class="card scroll"><table><tr><th>Date</th><th>Payer</th><th>Plan</th><th class="n">Amount</th><th>Method</th><th>Reference</th><th>Code</th><th>Status</th><th></th></tr>';
+      state.payments.slice().reverse().forEach(function(p){
+        h += '<tr><td>' + esc(p.created) + '</td><td>' + esc(p.payer) + '<div class="note">' + esc(p.contact) + '</div></td><td>' + esc(p.planName) + '</td><td class="n">' + num(p.amount) + ' ' + esc(p.currency) + '</td><td>' + esc(p.method) + '</td><td><b>' + esc(p.ref) + '</b></td><td>' + esc(p.code) + '</td><td>' + statusPill(p.status) + '</td><td>' + (p.status === 'pending' ? '<button class="btn sm" data-act="pay-verify" data-id="' + p.id + '">Verify</button> <button class="btn sm danger" data-act="pay-reject" data-id="' + p.id + '">Reject</button>' : '') + '</td></tr>'; });
+      h += '</table></div><p class="note">Verify a payment only after you see it in your Telebirr, bank or M-Pesa records. Verifying opens full access for the learner, or marks the partner as paid.</p>';
+    }
+  }
+  if(ADMIN_TAB === 'tools'){
+    h += '<p style="max-width:64ch">These tools fill in your real numbers and learner details. The first one writes a prompt you paste into an AI assistant. The others write messages and receipts you copy.</p>';
+    h += '<div class="card"><h3>Weekly programme report prompt</h3><p class="note">Builds a prompt containing this week\'s numbers. Paste it into Claude, ChatGPT or Gemini to get a report for your board or donor.</p><button class="btn sm" data-act="tool-report">Build prompt</button></div>';
+    h += '<div class="card"><h3>Learner message</h3><div class="fr"><div><label for="tm-learner">Learner</label><select id="tm-learner">' + (l.length ? l.map(function(x){ return '<option value="' + esc(x.code) + '">' + esc(x.code + ' ' + x.name) + '</option>'; }).join('') : '<option value="">No learners yet</option>') + '</select></div><div><label for="tm-type">Message</label><select id="tm-type"><option value="welcome">Welcome</option><option value="unlock">Unlock full access</option><option value="paid">Payment received</option><option value="week">Weekly nudge</option><option value="placement">Placement invitation</option></select></div></div><button class="btn sm" data-act="tool-msg">Write message</button></div>';
+    var vp = state.payments.filter(function(p){ return p.status === 'verified'; });
+    h += '<div class="card"><h3>Receipt</h3><label for="tr-pay">Verified payment</label><select id="tr-pay">' + (vp.length ? vp.map(function(p){ return '<option value="' + p.id + '">' + esc(p.id + ' · ' + p.payer + ' · ' + p.planName) + '</option>'; }).join('') : '<option value="">No verified payments yet</option>') + '</select><button class="btn sm" data-act="tool-receipt">Write receipt</button></div>';
+    h += '<div class="card"><label for="tool-out">Output</label><textarea id="tool-out" readonly style="min-height:240px;font-family:var(--f-mono);font-size:12.5px">' + esc(TOOL_OUT) + '</textarea><button class="btn sm" data-act="copy" data-el="tool-out">Copy</button></div>';
+  }
+  if(ADMIN_TAB === 'marketing'){
+    h += marketingHTML();
+  }
+  if(ADMIN_TAB === 'learning'){
+    var agg = {};
+    Object.keys(state.cp).forEach(function(k){ var m = state.cp[k]; Object.keys(m).forEach(function(cid){ if(!COURSE_BY[cid]) return; if(!agg[cid]) agg[cid] = {saved:0, started:0, done:0}; agg[cid][m[cid]]++; }); });
+    var rows = Object.keys(agg).map(function(k){ return {c:COURSE_BY[k], a:agg[k]}; });
+    rows.sort(function(x, y){ return (y.a.done * 3 + y.a.started * 2 + y.a.saved) - (x.a.done * 3 + x.a.started * 2 + x.a.saved); });
+    h += '<h3 style="margin-bottom:8px">Academy courses</h3><div class="card scroll"><table><tr><th>Course</th><th class="n">Learners started</th><th class="n">Completed</th></tr>' + ACAD.map(function(c){
+      var st = 0, dn = 0; Object.keys(state.ap).forEach(function(k){ var n = apDone(c.id, k); if(n > 0) st++; if(n >= c.lessons.length) dn++; });
+      return '<tr><td><b>' + esc(c.title) + '</b></td><td class="n">' + st + '</td><td class="n">' + dn + '</td></tr>'; }).join('') + '</table></div>';
+    h += '<h3 style="margin:16px 0 8px">Free library</h3>';
+    if(!rows.length) h += '<div class="card"><p>No library activity yet.</p></div>';
+    else {
+      h += '<div class="card scroll"><table><tr><th>Course</th><th>Provider</th><th class="n">Saved</th><th class="n">Started</th><th class="n">Done</th></tr>';
+      rows.slice(0, 25).forEach(function(r){ h += '<tr><td><b>' + esc(r.c.title) + '</b></td><td>' + esc(r.c.prov) + '</td><td class="n">' + r.a.saved + '</td><td class="n">' + r.a.started + '</td><td class="n">' + r.a.done + '</td></tr>'; });
+      h += '</table></div>';
+    }
+    h += '<p class="note">Counts include guest activity from this browser.</p>';
+  }
+  if(ADMIN_TAB === 'demand'){
+    h += '<div class="card"><h3 style="margin-bottom:10px">Post an employer role</h3><form id="demandForm">';
+    h += '<div class="fr"><div><label for="d-emp">Employer *</label><input id="d-emp" name="employer"></div><div><label for="d-role">Role *</label><input id="d-role" name="role"></div></div>';
+    h += '<div class="fr"><div><label for="d-wage">Wage</label><input id="d-wage" name="wage" placeholder="12,000-18,000 ETB / mo"></div><div><label for="d-loc">Location</label><input id="d-loc" name="location" placeholder="Addis Ababa"></div></div>';
+    h += '<div class="fr"><div><label for="d-type">Type</label><select id="d-type" name="type"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option><option>Hybrid</option></select></div><div><label for="d-seats">Seats</label><input id="d-seats" name="seats" type="number" min="1" value="1"></div></div>';
+    h += '<label for="d-track">Track</label><select id="d-track" name="track"><option value="">Any</option>' + TRACKS.map(function(t){ return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('') + '</select>';
+    h += '<label for="d-skills">Skills (comma separated)</label><input id="d-skills" name="skills"><label for="d-com">Committed to interview graduates?</label><select id="d-com" name="committed"><option value="yes">Yes</option><option value="no">No</option></select><button class="btn" type="submit">Post role</button></form></div>';
+    if(d.length){
+      h += '<div class="card scroll"><table><tr><th>Employer</th><th>Role</th><th>Wage</th><th class="n">Seats</th><th>Committed</th><th></th></tr>';
+      d.forEach(function(x){ h += '<tr><td>' + esc(x.employer) + '</td><td><b>' + esc(x.role) + '</b></td><td>' + esc(x.wage) + '</td><td class="n">' + esc(x.seats) + '</td><td>' + (x.committed ? '<span class="pill gold">Yes</span>' : '<span class="pill">No</span>') + '</td><td><button class="btn sm danger" data-act="deld" data-id="' + esc(x.id) + '">Delete</button></td></tr>'; });
+      h += '</table></div>';
+    }
+  }
+  if(ADMIN_TAB === 'settings'){
+    h += '<form id="settingsForm"><div class="card" style="max-width:640px"><h3 style="margin-bottom:10px">Plan prices</h3><p class="note">These are placeholders. Set the prices you want to charge.</p><div class="fr">';
+    state.plans.filter(function(p){ return p.id !== 'demo'; }).forEach(function(p){ h += '<div><label for="sp-' + p.id + '">' + esc(p.name) + ' (' + esc(p.cur) + ' ' + esc(p.per) + ')</label><input id="sp-' + p.id + '" name="sp-' + p.id + '" type="number" min="0" value="' + esc(p.price) + '"></div>'; });
+    h += '</div></div><div class="card" style="max-width:640px"><h3 style="margin-bottom:10px">Where people send payment</h3><p class="note">Shown on the pricing page. Use your real account numbers.</p>';
+    PAY_METHODS.forEach(function(m, i){ h += '<label for="pi-' + i + '">' + esc(m) + '</label><input id="pi-' + i + '" name="pi-' + i + '" value="' + esc(state.payInfo[m] || '') + '" placeholder="Number or account details">'; });
+    h += '</div><div class="card" style="max-width:640px"><h3 style="margin-bottom:10px">Site, cohort and rates</h3><label for="s-site">Public site address (used in marketing links)</label><input id="s-site" name="site" placeholder="https://yourname.example" value="' + esc(state.settings.siteUrl || '') + '"><div class="fr"><div><label for="s-name">Cohort name</label><input id="s-name" name="cname" value="' + esc(state.cohort.name) + '"></div><div><label for="s-start">Start date</label><input id="s-start" name="start" type="date" value="' + esc(state.cohort.start) + '"></div></div><div class="fr"><div><label for="s-fx">USD to ETB rate</label><input id="s-fx" name="fx" type="number" min="1" step="0.5" value="' + esc(state.fx) + '"></div><div><label for="s-vat">Tax included in prices (%)</label><input id="s-vat" name="vat" type="number" min="0" max="50" step="0.5" value="' + esc(state.settings.vat || 0) + '"></div></div><p class="note">The exchange rate default of 150 is a placeholder. Confirm the tax treatment of your fees with an accountant.</p><button class="btn" type="submit">Save settings</button></div></form>';
+  }
+  return h;
+}
+
+/* ---------- Admin tools ---------- */
+function toolReport(){
+  var l = state.learners, n = l.length, full = l.filter(function(x){ return x.access; }).length, avg = n ? Math.round(l.reduce(function(s, x){ return s + prog(x); }, 0) / n) : 0;
+  var earned = l.reduce(function(s, x){ return s + income(x); }, 0), rv = revenue();
+  var acd = 0; l.forEach(function(x){ acd += acadDone(x.code).length; });
+  var src = {}; state.applicants.forEach(function(x){ var k = x.source || 'Not stated'; src[k] = (src[k] || 0) + 1; });
+  var srcTxt = Object.keys(src).map(function(k){ return k + ': ' + src[k]; }).join(', ') || 'none';
+  return "Act as a programme analyst. Write a one-page weekly report for the " + state.cohort.name + " programme using ONLY the figures below. Do not add numbers I have not given. Structure: Headline, What went well, What needs attention, Three actions for next week, Questions for the team.\n\nFIGURES (" + today() + ")\n- Learners: " + n + " (full access: " + full + ", demo: " + (n - full) + ")\n- Average programme completion: " + avg + "%\n- Academy courses completed (total): " + acd + "\n- Learner income logged: " + money(earned) + "\n- Placed: " + l.filter(function(x){ return x.placed; }).length + "\n- Payments verified: " + rv.verified + " (" + num(rv.etb) + " ETB, " + num(rv.usd) + " USD); awaiting verification: " + rv.pending + "\n- Partners: " + state.partners.length + " (employers " + state.partners.filter(function(p){ return p.type === 'employer'; }).length + ", trainers " + state.partners.filter(function(p){ return p.type === 'trainer'; }).length + ", organizations " + state.partners.filter(function(p){ return p.type === 'org'; }).length + ")\n- Applicants by channel: " + srcTxt + "\n- Open employer roles: " + state.demand.filter(function(d){ return d.status === 'Open'; }).length;
+}
+function toolMessage(code, type){
+  var l = findLearner(code); if(!l) return 'Choose a learner first.';
+  var site = (state.settings.siteUrl || '').trim() || 'https://YOUR-SITE', first = l.name.split(' ')[0], tr = trackById(l.track);
+  if(type === 'welcome') return 'Hello ' + first + ', welcome to WorkReady AI. Your learner code is ' + l.code + '. Sign in at ' + site + '#learner. The free demo is open now: Week 1 of the programme and Lesson 1 of every Academy course.';
+  if(type === 'unlock') return 'Hello ' + first + ', your free demo is open. To unlock the full programme and all Academy courses, choose a plan at ' + site + '#pricing, pay with Telebirr, CBE Birr, bank transfer or M-Pesa, and send us the payment reference. If you need a scholarship or want to pay after placement, reply to this message.';
+  if(type === 'paid'){
+    var p = state.payments.filter(function(x){ return x.code === l.code && x.status === 'verified'; }).pop();
+    return 'Hello ' + first + ', we received your payment' + (p ? ' for ' + p.planName + ' (reference ' + p.ref + ')' : '') + '. Your full access is now ' + (l.access ? 'active' : 'being activated') + '. Sign in at ' + site + '#learner with your code ' + l.code + '.';
+  }
+  if(type === 'week'){
+    var nextTask = '', done = l.done || {};
+    outer: for(var i = 0; i < CURR.length; i++){ for(var k = 0; k < CURR[i].tasks.length; k++){ if(!done[CURR[i].w + '-' + k]){ nextTask = 'Week ' + CURR[i].w + ': ' + CURR[i].tasks[k]; break outer; } } }
+    return 'Hello ' + first + ', you have completed ' + prog(l) + '% of the programme. Your next task is ' + (nextTask || 'to finalize your Skills Passport') + '. Reply if you are stuck and your mentor will help.';
+  }
+  return 'Hello ' + first + ', employers are hiring' + (tr ? ' in ' + tr.name : '') + '. Please make sure your Skills Passport is up to date, then reply with the times you are free for interview practice. Your code is ' + l.code + '.';
+}
+function toolReceipt(id){
+  var p = null; state.payments.forEach(function(x){ if(x.id === id) p = x; });
+  if(!p) return 'Choose a verified payment first.';
+  var vat = Number(state.settings.vat || 0), vtxt = vat > 0 ? '\nOf which tax (' + vat + '% included): ' + (p.amount - p.amount / (1 + vat / 100)).toFixed(2) + ' ' + p.currency : '';
+  return 'RECEIPT\nWorkReady AI\nReceipt no: ' + p.id + '\nDate verified: ' + (p.verified || today()) + '\nReceived from: ' + p.payer + '\nCode: ' + p.code + '\nFor: ' + p.planName + '\nAmount: ' + num(p.amount) + ' ' + p.currency + vtxt + '\nPaid by: ' + p.method + ' (reference ' + p.ref + ')\n\nThank you.';
+}
+
+/* ---------- Marketing generator ---------- */
+function offerInfo(key){
+  if(key.indexOf('c:') === 0){
+    var c = ACAD_BY[key.slice(2)];
+    return {name:c.title, what:c.sum, bene:c.out.slice(0, 3), target:'academy', tags:['AI','Leadership','Education']};
+  }
+  var map = {
+    demo:{name:'The WorkReady AI free demo', what:'A free demo of a 12-week programme that combines AI skills, soft skills and paid apprenticeship work', bene:['Week 1 of the programme and Lesson 1 of every Academy course are free','Built for phones and small data bundles','Learn in a cohort with mentors'], target:'apply', tags:['Ethiopia','Skills','AI']},
+    seat:{name:'The WorkReady AI programme', what:'A 12-week programme with a paid apprenticeship phase and support after placement', bene:['Specialization tracks matched to employer demand','A Skills Passport that shows your skills, income and client ratings','Mentors and a cohort to learn with'], target:'pricing', tags:['Jobs','Skills','Ethiopia']},
+    employers:{name:'Hire WorkReady AI graduates', what:'Employers can list roles and meet graduates who have completed a paid apprenticeship phase', bene:['Roles listed for graduates','Matching help from the programme team','Graduates share a Skills Passport with their record'], target:'apply', tags:['Hiring','Talent','Ethiopia']},
+    trainers:{name:'Teach on WorkReady AI', what:'Trainers can apply for a listing on the Academy page', bene:['A public trainer profile after approval','A platform for reaching learners','Tools and guidance on pricing and delivery'], target:'apply', tags:['Training','Teaching','Ethiopia']},
+    orgs:{name:'AI and skills training for your team', what:'NGOs, schools and companies can give staff access to Academy courses', bene:['Courses on AI policy, MEL, grants and school leadership','Access codes for your staff','A skill gap check for your team'], target:'pricing', tags:['NGO','Schools','Leadership']}
+  };
+  return map[key] || map.demo;
+}
+var AUD_PHRASE = {youth:'young job seekers', leaders:'school leaders', ngo:'NGO teams', exec:'executives and senior leaders', employers:'employers', trainers:'trainers'};
+function mkLink(platform, offer, target){
+  var base = (state.settings.siteUrl || '').trim() || 'https://YOUR-SITE', slug = String(offer).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  return base + '?utm_source=' + encodeURIComponent(platform) + '&utm_medium=social&utm_campaign=' + slug + '#' + target;
+}
+function clip(s, n){ return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function mkPosts(offerKey, audKey, msg){
+  var o = offerInfo(offerKey), aud = AUD_PHRASE[audKey] || 'you', tags = o.tags.map(function(t){ return '#' + t; }).join(' ');
+  var lead = (msg && msg.trim()) ? msg.trim() + '\n\n' : '', out = [];
+  var yt = clip(o.name + ' for ' + aud, 70);
+  out.push({name:'YouTube', note:'Title ' + yt.length + ' of 100 characters', text:'TITLE\n' + yt + '\n\nDESCRIPTION\n' + lead + o.what + '.\n\nIn this video:\n' + o.bene.map(function(b){ return '- ' + b; }).join('\n') + '\n\nTry the free demo: ' + mkLink('youtube', offerKey, o.target) + '\n\nChapters (edit the times):\n0:00 Why this matters\n1:00 ' + o.bene[0] + '\n3:00 ' + (o.bene[1] || 'How it works') + '\n5:00 What to do next\n\nResults depend on your effort and local conditions. No job or income is guaranteed.\n\nTAGS\n' + o.tags.concat(['Ethiopia','online learning']).join(', ')});
+  out.push({name:'LinkedIn', note:'', text:lead + o.name + ': a practical option for ' + aud + '.\n\n' + o.what + '.\n\n' + o.bene.map(function(b){ return '- ' + b; }).join('\n') + '\n\nStart with the free demo: ' + mkLink('linkedin', offerKey, o.target) + '\n\n' + tags + ' #Ethiopia'});
+  out.push({name:'TikTok or Reels script', note:'About 30 seconds', text:'HOOK (0-3 s), on camera\n"' + (msg && msg.trim() ? msg.trim() : 'If you are ' + aud + ', this is for you.') + '"\n\nVALUE (3-22 s)\nShow the screen. Say: "' + o.bene[0] + '." Then: "' + (o.bene[1] || o.what) + '."\n\nNEXT STEP (22-30 s)\n"The demo is free. Link in bio."\n\nON-SCREEN TEXT\n' + clip(o.name, 40) + '\n\nCAPTION\n' + clip(o.name + ' for ' + aud + '. Free demo, link in bio.', 150) + ' ' + tags + ' #Ethiopia\n\nLINK FOR BIO\n' + mkLink('tiktok', offerKey, o.target)});
+  var xp = [clip(o.name + ' for ' + aud + '. A short thread. (1/5)', 275), clip('(2/5) ' + o.bene[0] + '.', 275), clip('(3/5) ' + (o.bene[1] || o.what) + '.', 275), clip('(4/5) ' + (o.bene[2] || 'You can try it before you pay.'), 275), clip('(5/5) Try the free demo: ' + mkLink('x', offerKey, o.target), 275)];
+  out.push({name:'X (Twitter) thread', note:xp.map(function(p){ return p.length; }).join(', ') + ' characters per post', text:xp.map(function(p, i){ return (i + 1) + '. ' + p; }).join('\n\n')});
+  out.push({name:'Facebook and Instagram', note:'', text:lead + o.name + ' for ' + aud + '.\n\n' + o.what + '.\n\n' + o.bene.map(function(b){ return '- ' + b; }).join('\n') + '\n\nFree demo: ' + mkLink('facebook', offerKey, o.target) + '\n\n' + tags + ' #Ethiopia'});
+  out.push({name:'Telegram and WhatsApp', note:'Keep it short', text:lead + o.name + '\n' + o.what + '.\n\n' + o.bene.map(function(b){ return '- ' + b; }).join('\n') + '\n\nFree demo: ' + mkLink('telegram', offerKey, o.target)});
+  return out;
+}
+function marketingHTML(){
+  var h = '<p style="max-width:64ch">Pick an offer and an audience and get ready-to-edit posts for each channel, with a tracking link per channel. Post them yourself or with a scheduling tool. Check each platform\'s current rules and keep claims honest.</p>';
+  h += '<div class="card"><form id="mkForm"><div class="fr"><div><label for="mk-offer">Offer</label><select id="mk-offer"><option value="demo">Free demo</option><option value="seat">Programme seat</option>' + ACAD.map(function(c){ return '<option value="c:' + c.id + '">Academy: ' + esc(c.title) + '</option>'; }).join('') + '<option value="employers">Employer hiring</option><option value="trainers">Trainer listing</option><option value="orgs">Team access for organizations</option></select></div>';
+  h += '<div><label for="mk-aud">Audience</label><select id="mk-aud"><option value="youth">Young job seekers</option><option value="leaders">School leaders</option><option value="ngo">NGO teams</option><option value="exec">Executives and senior leaders</option><option value="employers">Employers</option><option value="trainers">Trainers</option></select></div></div>';
+  h += '<label for="mk-msg">Your own opening line (optional)</label><input id="mk-msg" placeholder="A story or message in your own words"><button class="btn" type="submit">Generate posts</button></form>';
+  if(!(state.settings.siteUrl || '').trim()) h += '<p class="note" style="margin-top:10px">Links show YOUR-SITE until you set the public site address in Settings.</p>';
+  h += '</div><div id="mk-out">' + (MK.out ? mkOutHTML(MK.out) : '') + '</div>';
+  var rows = CHANNELS.map(function(ch){
+    var ap = state.applicants.filter(function(x){ return x.source === ch; }).length + state.partners.filter(function(x){ return x.source === ch; }).length;
+    var pd = state.payments.filter(function(x){ return x.source === ch && x.status === 'verified'; }).length;
+    return {ch:ch, ap:ap, pd:pd};
+  }).filter(function(r){ return r.ap || r.pd; });
+  h += '<h2>Applicants and paying customers by channel</h2>';
+  if(!rows.length) h += '<div class="card"><p>No attribution data yet. It fills in as people choose how they heard about you on the application form.</p></div>';
+  else h += '<div class="card scroll"><table><tr><th>Channel</th><th class="n">Applicants</th><th class="n">Verified payments</th><th class="n">Conversion</th></tr>' + rows.map(function(r){ return '<tr><td><b>' + esc(r.ch) + '</b></td><td class="n">' + r.ap + '</td><td class="n">' + r.pd + '</td><td class="n">' + (r.ap ? Math.round(r.pd / r.ap * 100) + '%' : '-') + '</td></tr>'; }).join('') + '</table></div>';
+  h += '<h2>Revenue streams</h2><div class="card"><ul class="lb"><li>Programme seats (learners)</li><li>Academy all-access subscriptions</li><li>Team access for NGOs, schools and companies</li><li>Trainer listings</li><li>Employer role listings and placement fees</li><li>Sponsored scholarships from funders and employers</li></ul></div>';
+  return h;
+}
+function mkOutHTML(posts){
+  return '<h2>Posts</h2><div class="grid">' + posts.map(function(p, i){
+    return '<article class="course"><h3>' + esc(p.name) + '</h3>' + (p.note ? '<p class="note" style="margin:0">' + esc(p.note) + '</p>' : '') + '<textarea id="mkp-' + i + '" readonly style="min-height:210px;font-size:13px;margin:6px 0">' + esc(p.text) + '</textarea><div class="acts"><button class="btn sm" data-act="copy" data-el="mkp-' + i + '">Copy</button></div></article>';
+  }).join('') + '</div>';
+}
+
+/* ================= EVENTS ================= */
+function readBuilder(){
+  var m = {sector:'b-sector', dtype:'b-dtype', depth:'b-depth', audience:'b-audience', region:'b-region', timeframe:'b-timeframe', decision:'b-decision', context:'b-context', constraints:'b-constraints'};
+  for(var k in m){ var el = $(m[k]); if(el) SS.vals[k] = el.value; }
+  var out = $('b-out'); if(out) out.value = buildPrompt(SS.vals);
+}
+function readBrief(){
+  ['title','reader','deadline','decision','bottom','context','optA','optB','optC','evidence','risks','rec','next'].forEach(function(k){ var el = $('d-' + k); if(el) SS.brief[k] = el.value; });
+  var out = $('brief-out'); if(out) out.value = briefMarkdown(SS.brief);
+}
+function verifyPayment(p){
+  p.status = 'verified'; p.verified = today();
+  var l = findLearner(p.code);
+  if(l && (p.planId === 'seat' || p.planId === 'academy')) l.access = true;
+  var pr = findPartner(p.code); if(pr) pr.paid = true;
+}
+
+document.addEventListener('click', function(e){
+  var t = e.target.closest ? e.target.closest('[data-act]') : null;
+  if(!t) return;
+  var act = t.getAttribute('data-act'), id = t.getAttribute('data-id');
+  if(act === 'cs'){
+    var cid = t.getAttribute('data-cid'), st = t.getAttribute('data-st'), cp = getCP();
+    if(cp[cid] === st){ delete cp[cid]; } else { cp[cid] = st; }
+    save();
+    toast(cp[cid] ? 'Marked ' + (st === 'saved' ? 'saved' : st === 'started' ? 'as started' : 'as done') : 'Removed from your list');
+    refreshCourseUI(cid);
+  } else if(act === 'cview'){ CF.view = t.getAttribute('data-v'); rerender(false);
+  } else if(act === 'cpath'){ CF.path = t.getAttribute('data-k'); rerender(true);
+  } else if(act === 'skmode'){ SK.mode = t.getAttribute('data-m'); rerender(true);
+  } else if(act === 'skcopy'){ copyText(skillSummaryText(), 'Summary copied');
+  } else if(act === 'copy'){
+    var el = $(t.getAttribute('data-el')); if(el) copyText(el.value !== undefined && el.tagName !== 'P' ? el.value : el.textContent, 'Copied');
+  } else if(act === 'llogin'){
+    var code = ($('learnerCode').value || '').trim().toUpperCase();
+    if(!code) return toast('Enter your code');
+    if(!findLearner(code)) return toast('Code not found: ' + code);
+    setSess({role:'learner', code:code}); rerender(false); toast('Welcome back');
+  } else if(act === 'alogin'){
+    if($('adminPass').value !== ADMIN_PASS) return toast('Wrong passcode');
+    setSess({role:'admin'}); rerender(false);
+  } else if(act === 'logout'){ setSess(null); toast('Signed out'); if(route() === 'home') rerender(false); else location.hash = '#home';
+  } else if(act === 'godash'){ setSess({role:'learner', code:t.getAttribute('data-code')}); location.hash = '#learner';
+  } else if(act === 'pcopy'){ var s = getSess(), lr = s && findLearner(s.code); if(lr) copyText(passportText(lr), 'Passport summary copied');
+  } else if(act === 'aopen'){ AC.cid = t.getAttribute('data-cid'); AC.li = 0; rerender(false);
+  } else if(act === 'aback'){ AC.cid = ''; rerender(false);
+  } else if(act === 'aaud'){ AC.aud = t.getAttribute('data-a'); rerender(true);
+  } else if(act === 'lesson'){ AC.li = Number(t.getAttribute('data-i')); rerender(false);
+  } else if(act === 'lnav'){ AC.li = Math.max(0, AC.li + Number(t.getAttribute('data-d'))); rerender(false);
+  } else if(act === 'ldone'){
+    var c = ACAD_BY[AC.cid]; if(!c) return;
+    if(AC.li > 0 && !hasAccess(curLearner())) return toast('Unlock the full course to continue');
+    var ap = apCourse(c.id);
+    if(ap.done[AC.li]) delete ap.done[AC.li]; else ap.done[AC.li] = true;
+    save(); rerender(true); toast(ap.done[AC.li] ? 'Lesson complete' : 'Marked as not complete');
+  } else if(act === 'stab'){ SS.tab = t.getAttribute('data-t'); rerender(false);
+  } else if(act === 'pickplan'){
+    SS.plan = t.getAttribute('data-p'); var sel = $('pf-plan'); if(sel) sel.value = SS.plan;
+    var box = $('checkout'); if(box && box.scrollIntoView) box.scrollIntoView({behavior:'smooth'});
+  } else if(act === 'atab'){ ADMIN_TAB = t.getAttribute('data-t'); rerender(true);
+  } else if(act === 'deld'){ state.demand = state.demand.filter(function(x){ return x.id !== id; }); save(); rerender(true); toast('Role deleted');
+  } else if(act === 'grant'){ var gl = null; state.learners.forEach(function(x){ if(x.id === id) gl = x; }); if(gl){ gl.access = true; save(); rerender(true); toast('Access granted to ' + gl.code); }
+  } else if(act === 'pay-verify' || act === 'pay-reject'){
+    state.payments.forEach(function(p){ if(p.id === id){ if(act === 'pay-verify') verifyPayment(p); else p.status = 'rejected'; } });
+    save(); rerender(true); toast(act === 'pay-verify' ? 'Payment verified' : 'Payment rejected');
+  } else if(act === 'p-approve' || act === 'p-reject'){
+    state.partners.forEach(function(p){ if(p.id === id) p.status = act === 'p-approve' ? 'approved' : 'rejected'; });
+    save(); rerender(true); toast(act === 'p-approve' ? 'Approved' : 'Rejected');
+  } else if(act === 'p-codes'){
+    var pr = null; state.partners.forEach(function(p){ if(p.id === id) pr = p; });
+    var n = Math.max(1, Math.min(500, Number(($('n-' + id) || {}).value) || 0));
+    if(!pr) return;
+    pr.codes = pr.codes || [];
+    for(var i = 0; i < n; i++){ var nl = newLearner((pr.org || pr.name) + ' staff ' + (pr.codes.length + 1), {access:true, orgId:pr.id}); pr.codes.push(nl.code); }
+    save(); rerender(true); toast(n + ' access codes created');
+  } else if(act === 'tool-report'){ TOOL_OUT = toolReport(); rerender(true);
+  } else if(act === 'tool-msg'){ TOOL_OUT = toolMessage(($('tm-learner') || {}).value, ($('tm-type') || {}).value); rerender(true);
+  } else if(act === 'tool-receipt'){ TOOL_OUT = toolReceipt(($('tr-pay') || {}).value); rerender(true);
+  } else if(act === 'jcat'){ JB.cat = t.getAttribute('data-c'); rerender(true);
+  } else if(act === 'jsave'){ var jk = 'j:' + t.getAttribute('data-j'), jc = getCP(); if(jc[jk]) delete jc[jk]; else jc[jk] = 'saved'; save(); var jl2 = $('jlist'); if(jl2) jl2.innerHTML = jobsListHTML(); toast(jc[jk] ? 'Saved' : 'Removed');
+  } else if(act === 'export'){ EXPORT_OPEN = !EXPORT_OPEN; rerender(true);
+  } else if(act === 'reset-ask'){ RESET_ASK = true; rerender(true);
+  } else if(act === 'reset-no'){ RESET_ASK = false; rerender(true);
+  } else if(act === 'reset-yes'){ try{ localStorage.removeItem(KEY); }catch(x){} state = fresh(); RESET_ASK = false; EXPORT_OPEN = false; save(); rerender(true); toast('Reset complete');
+  }
+});
+
+document.addEventListener('input', function(e){
+  var t = e.target, id = t.id || '';
+  if(id === 'fq'){ CF.q = t.value; var cl = $('clist'); if(cl) cl.innerHTML = listHTML(); }
+  else if(id === 'jq'){ JB.q = t.value; var jl = $('jlist'); if(jl) jl.innerHTML = jobsListHTML(); }
+  else if(t.getAttribute && t.getAttribute('data-skill')){
+    var k = who(), sid = t.getAttribute('data-skill');
+    if(!state.assess[k]) state.assess[k] = {};
+    state.assess[k][sid] = Number(t.value);
+    var o = $('skv-' + sid); if(o) o.textContent = t.value;
+    save(); $('skres').innerHTML = skillResultsHTML();
+  }
+  else if(id.indexOf('b-') === 0 && id !== 'b-out'){ readBuilder(); }
+  else if(id.indexOf('d-') === 0 && t.closest && t.closest('#briefForm')){ readBrief(); }
+});
+
+document.addEventListener('change', function(e){
+  var t = e.target, id = t.id || '';
+  var map = {ftrack:'track', fskill:'skill', fsec:'sec', flevel:'level', fmine:'mine'};
+  if(map[id]){ CF[map[id]] = t.value; var cl = $('clist'); if(cl) cl.innerHTML = listHTML(); return; }
+  if(id === 'flow'){ CF.low = t.checked; var cl2 = $('clist'); if(cl2) cl2.innerHTML = listHTML(); return; }
+  if(id === 'a-type'){ toggleApply(t.value); return; }
+  if(id === 'lib-sector'){ SS.lib = t.value; var lg = $('libgrid'); if(lg) lg.innerHTML = libHTML(); return; }
+  if(id.indexOf('b-') === 0 && id !== 'b-out'){ readBuilder(); return; }
+  if(t.getAttribute && t.getAttribute('data-task')){
+    var s = getSess(); if(!s || s.role !== 'learner') return;
+    var l = findLearner(s.code); if(!l) return;
+    l.done = l.done || {}; l.done[t.getAttribute('data-task')] = t.checked; save();
+    var p = prog(l);
+    $('progbar').style.width = p + '%'; $('progpct').textContent = p + '%';
+    $('progtxt').textContent = doneTasks(l) + ' of ' + totalTasks() + ' tasks · Phase ' + phaseOf(l) + ' of 4';
+    return;
+  }
+  if(t.getAttribute && t.getAttribute('data-placed')){
+    var pid = t.getAttribute('data-placed');
+    state.learners.forEach(function(x){ if(x.id === pid) x.placed = t.checked; });
+    save(); toast(t.checked ? 'Marked as placed' : 'Unmarked');
+  }
+});
+
+document.addEventListener('submit', function(e){
+  var f = e.target, id = f.id;
+  if(!id) return;
+  e.preventDefault();
+  var s = getSess(), l;
+  if(id === 'applyForm'){
+    var v = function(n){ return (f.elements[n].value || '').trim(); };
+    var type = v('atype'), need = [['name','Please enter your name'],['phone','Please enter your phone number'],['city','Please enter your city']];
+    if(type === 'learner') need = need.concat([['age','Please enter your age'],['track','Please select a track'],['why','Please tell us why you want to join'],['commitment','Please confirm your commitment']]);
+    if(type !== 'learner') need.push(['org', type === 'trainer' ? 'Please enter your name or business name' : 'Please enter the organization name']);
+    if(type === 'employer') need.push(['roles','Please describe the roles you want to fill']);
+    if(type === 'trainer') need.push(['topics','Please list the topics you teach']);
+    if(type === 'org') need.push(['needs','Please describe what you need']);
+    for(var i = 0; i < need.length; i++){ if(!v(need[i][0])){ toast(need[i][1]); f.elements[need[i][0]].focus(); return; } }
+    var res = $('applyResult'), html;
+    if(type === 'learner'){
+      var lr = newLearner(v('name'), {phone:v('phone'), email:v('email'), city:v('city'), education:f.elements.education.value, english:f.elements.english.value, track:v('track')});
+      state.applicants.push({id:uid(), name:lr.name, age:v('age'), gender:f.elements.gender.value, city:lr.city, phone:lr.phone, email:lr.email, education:lr.education, english:lr.english, laptop:f.elements.laptop.value, internet:f.elements.internet.value, track:lr.track, payment:f.elements.payment.value, childcare:f.elements.childcare.value, why:v('why'), commitment:v('commitment'), source:v('source'), status:'demo', learnerCode:lr.code, created:today()});
+      save();
+      html = '<div class="card" style="max-width:760px;border-color:var(--ok)"><span class="pill ok">Application received</span><h2 style="margin:14px 0 6px">Welcome, ' + esc(lr.name.split(' ')[0]) + '</h2><p>You are on the free demo. Pay for a plan to unlock the full programme and every Academy lesson.</p><div style="background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;text-align:center"><div class="note">Your learner code</div><div style="font:700 32px var(--f-mono);color:var(--accent);letter-spacing:2px">' + esc(lr.code) + '</div><div class="note">Save this code. You need it to sign in and to pay.</div></div><div class="row"><button class="btn" data-act="godash" data-code="' + esc(lr.code) + '">Go to my dashboard</button><a class="btn ghost" href="#academy">Try an Academy lesson</a><a class="btn ghost" href="#pricing">See plans</a></div></div>';
+      toast('Application submitted. Code ' + lr.code);
+    } else {
+      var code = nextPartnerCode(type), det = {};
+      if(type === 'employer') det.roles = v('roles');
+      if(type === 'trainer'){ det.topics = v('topics'); det.exp = v('exp'); det.link = v('link'); }
+      if(type === 'org'){ det.needs = v('needs'); det.otype = f.elements.otype.value; det.staff = v('staff'); }
+      state.partners.push({id:uid(), code:code, type:type, name:v('name'), org:v('org'), phone:v('phone'), email:v('email'), city:v('city'), details:det, source:v('source'), status:'pending', paid:false, created:today()});
+      save();
+      html = '<div class="card" style="max-width:760px;border-color:var(--ok)"><span class="pill ok">Application received</span><h2 style="margin:14px 0 6px">Thank you, ' + esc(v('name').split(' ')[0]) + '</h2><p>Your application is pending review. Your reference code is below. Use it when you pay for a plan.</p><div style="background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;text-align:center"><div class="note">Your code</div><div style="font:700 32px var(--f-mono);color:var(--accent);letter-spacing:2px">' + esc(code) + '</div></div><div class="row"><a class="btn" href="#pricing">See plans</a></div></div>';
+      toast('Application submitted. Code ' + code);
+    }
+    f.hidden = true; res.innerHTML = html;
+  } else if(id === 'payForm'){
+    var pv = function(n){ return (f.elements[n].value || '').trim(); };
+    var plan = planById(pv('plan'));
+    if(!plan) return toast('Choose a plan');
+    if(!pv('name')) return toast('Enter the name of the payer');
+    if(!pv('contact')) return toast('Enter a phone number or email');
+    var pcode = pv('code').toUpperCase();
+    if(!pcode) return toast('Enter your code. Apply free first if you do not have one.');
+    var owner = findLearner(pcode) || findPartner(pcode);
+    if(!owner) return toast('Code not found: ' + pcode);
+    if(!pv('ref')) return toast('Enter the transaction reference');
+    var learnerPlan = plan.id === 'seat' || plan.id === 'academy';
+    if(learnerPlan && !findLearner(pcode)) return toast('This plan needs a learner code (WRA-...)');
+    if(!learnerPlan && !findPartner(pcode)) return toast('This plan needs an employer, trainer or organization code');
+    var src = ''; state.applicants.forEach(function(a){ if(a.learnerCode === pcode) src = a.source || ''; }); var pp = findPartner(pcode); if(pp) src = pp.source || '';
+    var pid2 = 'P-' + uid();
+    state.payments.push({id:pid2, planId:plan.id, planName:plan.name, amount:plan.price, currency:plan.cur, method:pv('method'), ref:pv('ref'), payer:pv('name'), contact:pv('contact'), code:pcode, source:src, note:pv('note'), status:'pending', created:today()});
+    save(); f.reset(); toast('Reference recorded. We will verify your payment.');
+    var pr2 = $('payResult'); if(pr2) pr2.innerHTML = '';
+  } else if(id === 'quizForm'){
+    var c = ACAD_BY[AC.cid]; if(!c) return;
+    var score = 0, wrong = [];
+    for(var qi = 0; qi < c.quiz.length; qi++){
+      var picked = f.querySelector('input[name="aq' + qi + '"]:checked');
+      if(!picked){ toast('Answer every question'); return; }
+      if(Number(picked.value) === c.quiz[qi].a) score++; else wrong.push(qi);
+    }
+    apCourse(c.id).quiz = {score:score, total:c.quiz.length, wrong:wrong, date:today()};
+    save(); rerender(true); toast('You scored ' + score + ' of ' + c.quiz.length);
+  } else if(id === 'mkForm'){
+    MK.out = mkPosts($('mk-offer').value, $('mk-aud').value, $('mk-msg').value);
+    $('mk-out').innerHTML = mkOutHTML(MK.out);
+  } else if(id === 'incomeForm'){
+    if(!s || s.role !== 'learner') return; l = findLearner(s.code); if(!l) return;
+    var src2 = f.elements.source.value.trim(), amt = f.elements.amount.value.trim();
+    if(!src2) return toast('Enter the income source');
+    if(!amt || Number(amt) < 0) return toast('Enter a valid amount');
+    l.income = l.income || [];
+    l.income.push({id:uid(), source:src2, date:f.elements.date.value, amount:Number(amt), currency:f.elements.currency.value, hours:Number(f.elements.hours.value || 0), status:f.elements.status.value, note:f.elements.note.value});
+    save(); rerender(true); toast('Income logged');
+  } else if(id === 'ratingForm'){
+    if(!s || s.role !== 'learner') return; l = findLearner(s.code); if(!l) return;
+    l.ratingList = l.ratingList || []; l.ratingList.push(Number(f.elements.rating.value));
+    save(); rerender(true); toast('Rating saved');
+  } else if(id === 'demandForm'){
+    var emp = f.elements.employer.value.trim(), role = f.elements.role.value.trim();
+    if(!emp) return toast('Enter the employer');
+    if(!role) return toast('Enter the role');
+    state.demand.unshift({id:uid(), employer:emp, role:role, wage:f.elements.wage.value, location:f.elements.location.value, type:f.elements.type.value, seats:Number(f.elements.seats.value || 1), track:f.elements.track.value, skills:(f.elements.skills.value || '').split(',').map(function(x){ return x.trim(); }).filter(Boolean), committed:f.elements.committed.value === 'yes', status:'Open'});
+    save(); rerender(true); toast('Role posted');
+  } else if(id === 'settingsForm'){
+    state.plans.forEach(function(p){ if(p.id !== 'demo'){ var el = f.elements['sp-' + p.id]; if(el && el.value !== '') p.price = Math.max(0, Number(el.value)); } });
+    PAY_METHODS.forEach(function(m, i){ state.payInfo[m] = (f.elements['pi-' + i].value || '').trim(); });
+    state.settings.siteUrl = (f.elements.site.value || '').trim().replace(/\/+$/, '');
+    state.settings.vat = Number(f.elements.vat.value) || 0;
+    state.cohort.name = f.elements.cname.value.trim() || state.cohort.name;
+    state.cohort.start = f.elements.start.value || state.cohort.start;
+    state.fx = Number(f.elements.fx.value) || state.fx;
+    save(); toast('Settings saved');
+  }
+});
+
+window.addEventListener('hashchange', render);
+render();
+})();
+</script>
+
+</body></html>
